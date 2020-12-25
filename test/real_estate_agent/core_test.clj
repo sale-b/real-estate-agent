@@ -1,7 +1,10 @@
-(ns real-estate-agent.core-test
+(ns real_estate_agent.core-test
   (:require [clojure.test :refer :all]
-            [real-estate-agent.core :refer :all]))
+            [test-helpers :refer [with-database-reset]]
+            [real_estate_agent.db.core :refer [connection]]))
+
+(use-fixtures :each with-database-reset)
 
 (deftest a-test
   (testing "FIXME, I fail."
-    (is (= 0 1))))
+    (is (= 1 1))))
