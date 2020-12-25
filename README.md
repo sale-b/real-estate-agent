@@ -1,8 +1,8 @@
 # Real Estate Agent
 A real estate agent is a web application that helps clients buy or rent real estate by extracting and collecting ads from multiple sources, without intermediaries and provides a search and notification based system for registered users.
 
-#Profiles example
-Profiles.clj ignored by .gitignore
+### Profiles example
+Add file Profiles.clj ignored by .gitignore
 
 ```
 {:dev-local {:env {:port "8080"
@@ -21,8 +21,8 @@ Profiles.clj ignored by .gitignore
                      :database-port "5432"}}}
 ```
 
-# Run app
+### Run app
 Use `lein with-profiles +dev,+dev-local run` to run the app.
 
-# Run tests
-Use `lein with-profiles +test,+test-local test to run the tests.
+### Run tests
+Use `lein with-profiles +test,+test-local test` to run the tests.
