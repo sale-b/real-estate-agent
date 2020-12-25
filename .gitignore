@@ -6,10 +6,7 @@ pom.xml.asc
 /classes/
 /target/
 /checkouts/
-.lein-deps-sum
-.lein-repl-history
-.lein-plugins/
-.lein-failures
+.lein-*
 .nrepl-port
 .cpcache/
 
@@ -18,3 +15,5 @@ pom.xml.asc
 *.iws
 *.iml
 *.ipr
+
+profiles.clj
