@@ -1,10 +1,10 @@
-(ns real_estate_agent.db.migration
+(ns real-estate-agent.db.migration
   (:import [org.postgresql.util PSQLException])
   (:require [clojure.string :as string]
             [clojure.java.jdbc :as jdbc]
             [ragtime.jdbc]
             [ragtime.repl :as ragtime]
-            [real_estate_agent.db.core :refer [connection]]))
+            [real-estate-agent.db.core :refer [connection]]))
 
 (defn get-migration-config
   "Constructs the configuration map needed by Ragtime to run migrations

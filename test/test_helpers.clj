@@ -1,7 +1,7 @@
 (ns test-helpers
   (:require [environ.core :refer [env]]
-            [real_estate_agent.db.migration :refer [migrate-up! migrate-down!]]
-            [real_estate_agent.db.seed :refer [insert-all-seeds!]]))
+            [real-estate-agent.db.migration :refer [migrate-up! migrate-down!]]
+            [real-estate-agent.db.seed :refer [insert-all-seeds!]]))
 
 (defn with-database-reset
   [run-tests]

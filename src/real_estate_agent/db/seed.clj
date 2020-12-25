@@ -1,8 +1,8 @@
-(ns real_estate_agent.db.seed
+(ns real-estate-agent.db.seed
   (:require [clojure.java.io :as io]
             [clojure.java.jdbc :as jdbc]
             [clojure.edn :as edn]
-            [real_estate_agent.db.core :refer [connection]]))
+            [real-estate-agent.db.core :refer [connection]]))
 
 (defn insert-seed!
   "Inserts a single seed definition into the database."

@@ -1,7 +1,7 @@
-(ns real_estate_agent.core-test
+(ns real-estate-agent.core-test
   (:require [clojure.test :refer :all]
             [test-helpers :refer [with-database-reset]]
-            [real_estate_agent.db.core :refer [connection]]))
+            [real-estate-agent.db.core :refer [connection]]))
 
 (use-fixtures :each with-database-reset)
 

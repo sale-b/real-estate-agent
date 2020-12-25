@@ -1,4 +1,4 @@
-(ns real_estate_agent.db.core
+(ns real-estate-agent.db.core
   (:require [environ.core :refer [env]]))
 
 (def connection
