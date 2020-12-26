@@ -13,7 +13,8 @@
                  [ring-cors "0.1.13"]
                  [ring/ring-defaults "0.3.2"]
                  [metosin/ring-http-response "0.9.1"]
-                 [compojure "1.6.2"]]
+                 [compojure "1.6.2"]
+                 [overtone/at-at "1.2.0"]]
 
   :plugins [[lein-environ "1.2.0"]
             [lein-ancient "0.6.15"]]

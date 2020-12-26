@@ -4,7 +4,8 @@
             [real-estate-agent.rest.rest :as rest]
             [environ.core :refer [env]]
             [real-estate-agent.util.cast :refer [cast-int]])
-  (:use ring.adapter.jetty)
+  (:use ring.adapter.jetty
+        real-estate-agent.service.jobs)
   (:gen-class))
 
 (defn -main
@@ -12,5 +13,6 @@
   (migrate-down!)
   (migrate-up!)
   (insert-all-seeds!)
+  ;(jobs)
   (run-jetty rest/app {:port (cast-int (:port env))})
   )
