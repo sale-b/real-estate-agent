@@ -4,13 +4,13 @@
             [clojure.java.jdbc :as jdbc]
             [ragtime.jdbc]
             [ragtime.repl :as ragtime]
-            [real-estate-agent.db.core :refer [connection]]))
+            [real-estate-agent.db.dao :refer [db]]))
 
 (defn get-migration-config
   "Constructs the configuration map needed by Ragtime to run migrations
    on the database."
   []
-  {:datastore (ragtime.jdbc/sql-database connection)
+  {:datastore (ragtime.jdbc/sql-database db)
    :migrations (ragtime.jdbc/load-resources "migrations")})
 
 (defn get-migration-count
@@ -19,7 +19,7 @@
   []
   (try
     (let [query ["SELECT COUNT(id) AS count FROM ragtime_migrations"]
-          result (jdbc/query connection query)]
+          result (jdbc/query db query)]
       (:count (first result)))
     (catch PSQLException e
       (if (string/includes? (.getMessage e)

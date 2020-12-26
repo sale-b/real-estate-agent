@@ -2,13 +2,13 @@
   (:require [clojure.java.io :as io]
             [clojure.java.jdbc :as jdbc]
             [clojure.edn :as edn]
-            [real-estate-agent.db.core :refer [connection]]))
+            [real-estate-agent.db.dao :refer [db]]))
 
 (defn insert-seed!
   "Inserts a single seed definition into the database."
   [seed]
   (doseq [{:keys [table data]} seed]
-    (jdbc/insert-multi! connection table data)))
+    (jdbc/insert-multi! db table data)))
 
 (defn insert-all-seeds!
   "Reads all files in the seeds directory and inserts their contents into
