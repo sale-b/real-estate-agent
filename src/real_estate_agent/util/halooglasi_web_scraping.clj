@@ -8,13 +8,13 @@
 (defn html-page [url] (html/html-resource (java.net.URL. url)))
 
 
-(defn get-geolocation [html-page]
+(defn get-geolocation [page]
   (let [sting
-        (first (filter #(clojure.string/includes? % "GeoLocationRPT")
+        (some #(and (clojure.string/includes? % "GeoLocationRPT") %)
                        (map html/text
                             (html/select
-                              html-page
-                              [:script]))))]
+                              page
+                              [:script])))]
     (:GeoLocationRPT (json/read-str
                        (subs sting
                              (+ (index-of sting "QuidditaEnvironment.CurrentClassified=") 38)
