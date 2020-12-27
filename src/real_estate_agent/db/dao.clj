@@ -14,5 +14,5 @@
 
 (defn get-user
   [id]
-  (db/query db
-            ["select * from users where id = ?::integer" id]))
+  (first (db/query db
+            ["select * from users where id = ?::integer" id])))

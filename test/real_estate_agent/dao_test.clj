@@ -6,8 +6,8 @@
 (use-fixtures :each with-database-reset)
 
 (deftest get-user-test
-  (testing "CRUD test, get user from database"
-    (let [u (first (dao/get-user 1))]
+  (testing "should return user wih id 1"
+    (let [u (dao/get-user 1)]
     (is (not (empty? u)))
     (is (not (nil? u)))
     (is (= 1 (:id u)))

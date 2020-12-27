@@ -8,7 +8,7 @@
   (html-resource (java.io.StringReader. (slurp file-path))))
 
 (deftest get-geollocation-test
-  (testing "Getting geolocaton from a webpage"
+  (testing "should return geolocaton from a webpage"
     (let [coordinates (get-geolocation (fetch-page "resources\\test_files\\sample-ad.html"))]
     (is (not (nil? coordinates)))
     (is (= "44.809900,20.421300" coordinates))
