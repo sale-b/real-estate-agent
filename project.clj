@@ -7,6 +7,7 @@
                  [ragtime "0.8.0"]
                  [environ "1.2.0"]
                  [enlive "1.1.6"]
+                 [org.clojure/data.json "1.0.0"]
                  [ring/ring-core "1.8.2"]
                  [ring/ring-jetty-adapter "1.8.2"]
                  [ring/ring-json "0.5.0"]
