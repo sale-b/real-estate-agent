@@ -21,5 +21,5 @@
   (with-out-str
     (migrate-down!)
     (migrate-up!))
-  ;(insert-all-seeds!)
+  (insert-all-seeds!)
   (run-tests))
