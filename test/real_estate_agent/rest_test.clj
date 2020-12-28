@@ -19,5 +19,12 @@
           res (app req)
           body (json/read-str (:body res)
                               :key-fn keyword)]
-      (is (= {:id 1, :username "admin", :password "admin", :email "admin@admin.com", :enabled true}
+      (print body)
+      (is (= {:id 1,
+              :username "admin",
+              :password "admin",
+              :email "admin@admin.com",
+              :enabled true,
+              :created_on "2020-12-28T15:09:16Z",
+              :modified_on "2020-12-28T15:09:16Z"}
              body)))))

@@ -4,7 +4,9 @@ CREATE TABLE real_estates (
   description varchar not null,
   location varchar(100) not null,
   url varchar(255) not null,
-  living_space_area varchar(100) not null
+  living_space_area varchar(100) not null,
+  created_on timestamp default current_timestamp,
+  modified_on timestamp default current_timestamp
 );
 
 create table users(
@@ -12,7 +14,10 @@ create table users(
 	username varchar(50) not null unique,
 	password varchar(50) not null,
 	email varchar(50) unique,
-	enabled boolean not null
+	enabled boolean not null,
+	created_on timestamp default current_timestamp,
+	modified_on timestamp default current_timestamp
+
 );
 
 
