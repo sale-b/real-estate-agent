@@ -18,8 +18,22 @@
    :host     (:database-host env)
    :port     (:database-port env)})
 
+(defn insert-user
+  [user]
+  (first (db/insert! db :users user)))
 
-(defn get-user
+(defn get-user-by-id
   [id]
   (first (db/query db
-            ["select * from users where id = ?" id])))
+                   ["select * from users where id = ?" id])))
+
+(defn update-user
+  [user]
+  (db/update! db
+              :users
+              (assoc  user :modified_on (java.util.Date.))
+              ["id = ?" (:id user)]))
+
+(defn delete-user
+  [user]
+  (db/delete! db :users ["id = ?" (:id user)]))

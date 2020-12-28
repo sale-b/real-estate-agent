@@ -19,7 +19,6 @@
           res (app req)
           body (json/read-str (:body res)
                               :key-fn keyword)]
-      (print body)
       (is (= {:id 1,
               :username "admin",
               :password "admin",

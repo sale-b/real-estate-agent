@@ -5,7 +5,7 @@
 
 (defn get-user
   [id]
-  (let [u (dao/get-user (string-to-long id))]
+  (let [u (dao/get-user-by-id (string-to-long id))]
     (if (empty? u)
       (bad-request "User not found!")
       (response u))
