@@ -29,8 +29,7 @@
 
 (defn update-user
   [user]
-  (db/update! db
-              :users
+  (db/update! db :users
               (assoc  user :modified_on (java.util.Date.))
               ["id = ?" (:id user)]))
 
