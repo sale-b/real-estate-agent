@@ -52,13 +52,13 @@
 (deftest get-rooms-number-test
   (testing "should return ad rooms-number from a webpage"
     (let [rooms-number (get-rooms-number (fetch-page "resources\\test_files\\sample-ad.html"))]
-      (is (= "3.5" rooms-number))
+      (is (= 3.5 rooms-number))
       )))
 
 (deftest get-floor-test
   (testing "should return ad floor from a webpage"
     (let [floor (get-floor (fetch-page "resources\\test_files\\sample-ad.html"))]
-      (is (= "7" floor))
+      (is (= 7 floor))
       )))
 
 (deftest get-furniture-test
@@ -98,4 +98,18 @@
       )))
 
 
-
+(deftest read-ad-test
+  (testing "should return ad from a webpage"
+    (let [ad (read-ad (fetch-page "resources\\test_files\\sample-ad.html"))]
+      (print ad)
+      (is (= "Novi Beograd-Arena-Blok 25-130m2-Lux-Uknjižen ID#1" (:tittle ad)))
+      (is (= "44.809900,20.421300" (:geolocation ad)))
+      (is (= 260000.0 (:price ad)))
+      (is (= 130.0 (:living_space_area ad)))
+      (is (= "Agencija" (:advertiser ad)))
+      (is (= "Stan" (:type ad)))
+      (is (= 3.5 (:rooms_number ad)))
+      (is (= 7 (:floor ad)))
+      (is (nil? (:furniture ad)))
+      (is (= "EG" (:heating_type ad)))
+      )))

@@ -30,9 +30,17 @@
 (defn update-user
   [user]
   (db/update! db :users
-              (assoc  user :modified_on (java.util.Date.))
+              (assoc user :modified_on (java.util.Date.))
               ["id = ?" (:id user)]))
 
 (defn delete-user
   [user]
   (db/delete! db :users ["id = ?" (:id user)]))
+
+(defn insert-real-estate
+  [real-estate]
+  (db/with-db-transaction [db db]
+                          (let [id (:id (first (db/insert! db :real_estates
+                                                           (dissoc real-estate :advertiser :pictures))))]
+                          (doseq [picture (:pictures real-estate)]
+                            (db/insert! db  :real_estates_images {:url (str "https://img.halooglasi.com" picture) :real_estate_id id})))))

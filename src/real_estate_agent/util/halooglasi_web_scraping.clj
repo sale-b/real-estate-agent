@@ -1,6 +1,7 @@
 (ns real-estate-agent.util.halooglasi-web-scraping
   (:require [clojure.data.json :as json]
-            [net.cgrand.enlive-html :as html])
+            [net.cgrand.enlive-html :as html]
+            [real-estate-agent.util.cast :as cast])
   (:use [clojure.string :only [index-of]]))
 
 (defn get-substring [string start end]
@@ -30,10 +31,10 @@
   (:tip_nekretnine_s (:OtherFields (ad-content page))))
 
 (defn get-rooms-number [page]
-  (:broj_soba_s (:OtherFields (ad-content page))))
+  (cast/string-to-double (:broj_soba_s (:OtherFields (ad-content page)))))
 
 (defn get-floor [page]
-  (:sprat_s (:OtherFields (ad-content page))))
+  (cast/string-to-int (:sprat_s (:OtherFields (ad-content page)))))
 
 (defn get-furniture [page]
   (:namestenost_s (:OtherFields (ad-content page))))
@@ -56,6 +57,21 @@
 
 (defn get-geolocation [page]
   (:GeoLocationRPT (ad-content page)))
+
+(defn read-ad [page]
+  {:tittle (get-tittle page)
+   :price (get-price page)
+   :type (get-real-estate-type page)
+   :rooms_number (get-rooms-number page)
+   :floor (get-floor page)
+   :description (get-description page)
+   :geolocation (get-geolocation page)
+   :living_space_area (get-living-space-area page)
+   :furniture (get-furniture page)
+   :heating_type (get-heating page)
+   :pictures (get-pictures page)
+   :advertiser (get-advertiser page)
+   })
 
 
 

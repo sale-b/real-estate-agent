@@ -5,3 +5,6 @@
 
 (defn string-to-long [^String long]
   (Long. long))
+
+(defn string-to-double [^String double]
+  (Double. double))
