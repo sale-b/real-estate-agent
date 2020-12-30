@@ -105,5 +105,35 @@
                        :heating_type      "EG"}
           ]
       (let [db-response (dao/insert-real-estate real-estate)]
-        (is (nil? db-response))
+        (is (not (nil? db-response)))
+        (is (not (nil? (:id db-response))))
+        (let [db-real-estate (dao/get-real-estate-by-id (:id db-response))]
+          (is (not (nil? db-real-estate)))
+          (is (= (str "Stan na dobroj lokaciji. Po strukturi troiposoban, dvostrano orjentisan, dva mokra cvora, svetao i komforan. "
+                      "Kompletno renoviran i ne zahteva dodatna ulaganja. Uknjizen na 110m2 ali mereno sa terasamo stan ima 130m2.  "
+                      "Uknjizen. Za preporuku. Agancijska provizija 2%. Za sve dodatne informacije, molimo da nas kontaktirate.,") (:description db-real-estate)))
+          (is (== 130.0 (:living_space_area db-real-estate)))
+          (is (= "44.809900,20.421300" (:geolocation db-real-estate)))
+          (is (= nil (:furniture db-real-estate)))
+          ;its not stored in db since we are collecting only owners ads
+          (is (= nil(:advertiser db-real-estate)))
+          (is (== 3.5 (:rooms_number db-real-estate)))
+          (is (= "Novi Beograd-Arena-Blok 25-130m2-Lux-Uknjižen ID#1" (:tittle db-real-estate)))
+          (is (= "Stan" (:type db-real-estate)))
+          (is (= ["https://img.halooglasi.com/slike/oglasi/Thumbs/201227/l/novi-beograd-arena-blok-25-130m2-lux-uknjizen-5425636159803-71793910130.jpg"
+                  "https://img.halooglasi.com/slike/oglasi/Thumbs/201227/l/novi-beograd-arena-blok-25-130m2-lux-uknjizen-5425636159803-71793910131.jpg"
+                  "https://img.halooglasi.com/slike/oglasi/Thumbs/201227/l/novi-beograd-arena-blok-25-130m2-lux-uknjizen-5425636159803-71793910132.jpg"
+                  "https://img.halooglasi.com/slike/oglasi/Thumbs/201227/l/novi-beograd-arena-blok-25-130m2-lux-uknjizen-5425636159803-71793910133.jpg"
+                  "https://img.halooglasi.com/slike/oglasi/Thumbs/201227/l/novi-beograd-arena-blok-25-130m2-lux-uknjizen-5425636159803-71793910134.jpg"
+                  "https://img.halooglasi.com/slike/oglasi/Thumbs/201227/l/novi-beograd-arena-blok-25-130m2-lux-uknjizen-5425636159803-71793910135.jpg"
+                  "https://img.halooglasi.com/slike/oglasi/Thumbs/201227/l/novi-beograd-arena-blok-25-130m2-lux-uknjizen-5425636159803-71793910136.jpg"
+                  "https://img.halooglasi.com/slike/oglasi/Thumbs/201227/l/novi-beograd-arena-blok-25-130m2-lux-uknjizen-5425636159803-71793910137.jpg"
+                  "https://img.halooglasi.com/slike/oglasi/Thumbs/201227/l/novi-beograd-arena-blok-25-130m2-lux-uknjizen-5425636159803-71793910138.jpg"
+                  "https://img.halooglasi.com/slike/oglasi/Thumbs/201227/l/novi-beograd-arena-blok-25-130m2-lux-uknjizen-5425636159803-71793910139.jpg"] (:pictures db-real-estate)))
+          (is (== 260000.0 (:price db-real-estate)))
+          (is (= 7 (:floor db-real-estate)))
+          (is (= "EG" (:heating_type db-real-estate)))
+          (is (not (nil? (:created_on db-real-estate))))
+          (is (not (nil? (:modified_on db-real-estate))))
+          )
         ))))

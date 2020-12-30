@@ -40,7 +40,16 @@
 (defn insert-real-estate
   [real-estate]
   (db/with-db-transaction [db db]
-                          (let [id (:id (first (db/insert! db :real_estates
-                                                           (dissoc real-estate :advertiser :pictures))))]
-                          (doseq [picture (:pictures real-estate)]
-                            (db/insert! db  :real_estates_images {:url (str "https://img.halooglasi.com" picture) :real_estate_id id})))))
+                          (let [db-real-estate (first (db/insert! db :real_estates
+                                                           (dissoc real-estate :advertiser :pictures)))]
+                            (assoc db-real-estate :pictures
+                                                  (into [] (map :url (db/insert-multi! db :real_estates_images (for [picture (:pictures real-estate)]
+                                                                                 {:url (str "https://img.halooglasi.com" picture)
+                                                                                  :real_estate_id (:id db-real-estate)}))))))))
+
+(defn get-real-estate-by-id
+  [id]
+  (assoc (first (db/query db
+                          ["select * from real_estate_agent_test.public.real_estates re where re.id = ?" id]))
+    :pictures (first (into [] (map :url (db/query db
+                        ["select * from real_estate_agent_test.public.real_estates_images rei where rei.real_estate_id = ?" id]))))))
