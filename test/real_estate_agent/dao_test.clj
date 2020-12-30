@@ -79,7 +79,7 @@
 
 (deftest insert-real-estate-test
   (testing "should insert a new real estate into db with related pictures in transaction and assign it id, created_on, modified on"
-    (let [real-estate {:url "www.test.com"
+    (let [real-estate {:url               "www.test.com"
                        :description       (str "Stan na dobroj lokaciji. Po strukturi troiposoban, dvostrano orjentisan, dva mokra cvora, svetao i komforan. "
                                                "Kompletno renoviran i ne zahteva dodatna ulaganja. Uknjizen na 110m2 ali mereno sa terasamo stan ima 130m2.  "
                                                "Uknjizen. Za preporuku. Agancijska provizija 2%. Za sve dodatne informacije, molimo da nas kontaktirate.,")
@@ -116,7 +116,7 @@
           (is (= "44.809900,20.421300" (:geolocation db-real-estate)))
           (is (= nil (:furniture db-real-estate)))
           ;its not stored in db since we are collecting only owners ads
-          (is (= nil(:advertiser db-real-estate)))
+          (is (= nil (:advertiser db-real-estate)))
           (is (== 3.5 (:rooms_number db-real-estate)))
           (is (= "Novi Beograd-Arena-Blok 25-130m2-Lux-Uknjižen ID#1" (:tittle db-real-estate)))
           (is (= "Stan" (:type db-real-estate)))
@@ -137,3 +137,25 @@
           (is (not (nil? (:modified_on db-real-estate))))
           )
         ))))
+
+(deftest find-last-real-estate-test
+  (testing "should return last inserted ad"
+    (let [db-real-estate-last (dao/get-last-inserted-real-estate)]
+      (is (not (nil? db-real-estate-last)))
+      (is (= "www.last.com" (:url db-real-estate-last)))
+      (is (= "Stan na dobroj lokaciji. Po strukturi dvoiposoban, dvostrano orjentisan..." (:description db-real-estate-last)))
+      (is (== 60.0 (:living_space_area db-real-estate-last)))
+      (is (= "44.123123,20.123456" (:geolocation db-real-estate-last)))
+      (is (= nil (:furniture db-real-estate-last)))
+      ;its not stored in db since we are collecting only owners ads
+      (is (= nil (:advertiser db-real-estate-last)))
+      (is (== 2.5 (:rooms_number db-real-estate-last)))
+      (is (= "Vracar povoljno" (:tittle db-real-estate-last)))
+      (is (= "Stan" (:type db-real-estate-last)))
+      (is (= nil (:pictures db-real-estate-last)))
+      (is (== 250.0 (:price db-real-estate-last)))
+      (is (= 3 (:floor db-real-estate-last)))
+      (is (= "CG" (:heating_type db-real-estate-last)))
+      (is (not (nil? (:created_on db-real-estate-last))))
+      (is (not (nil? (:modified_on db-real-estate-last))))
+      )))

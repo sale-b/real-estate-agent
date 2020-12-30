@@ -41,15 +41,28 @@
   [real-estate]
   (db/with-db-transaction [db db]
                           (let [db-real-estate (first (db/insert! db :real_estates
-                                                           (dissoc real-estate :advertiser :pictures)))]
+                                                                  (dissoc real-estate :advertiser :pictures)))]
                             (assoc db-real-estate :pictures
                                                   (into [] (map :url (db/insert-multi! db :real_estates_images (for [picture (:pictures real-estate)]
-                                                                                 {:url (str "https://img.halooglasi.com" picture)
-                                                                                  :real_estate_id (:id db-real-estate)}))))))))
+                                                                                                                 {:url            (str "https://img.halooglasi.com" picture)
+                                                                                                                  :real_estate_id (:id db-real-estate)}))))))))
 
 (defn get-real-estate-by-id
   [id]
   (assoc (first (db/query db
-                          ["select * from real_estate_agent_test.public.real_estates re where re.id = ?" id]))
+                          ["select * from real_estates where re.id = ?" id]))
     :pictures (into [] (map :url (db/query db
-                        ["select * from real_estate_agent_test.public.real_estates_images rei where rei.real_estate_id = ?" id])))))
+                                           ["select * from real_estates_images where real_estate_id = ?" id])))))
+
+(defn get-real-estate-by-id
+  [id]
+  (assoc (first (db/query db
+                          ["select * from real_estates where id = ?" id]))
+    :pictures (into [] (map :url (db/query db
+                                           ["select * from real_estates_images where real_estate_id = ?" id])))))
+
+(defn get-last-inserted-real-estate
+  []
+  (first (db/query db
+                   ["select * from real_estates ORDER BY created_on DESC LIMIT 1"])))
+
