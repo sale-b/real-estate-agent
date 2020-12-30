@@ -101,7 +101,7 @@
                                            "/slike/oglasi/Thumbs/201227/l/novi-beograd-arena-blok-25-130m2-lux-uknjizen-5425636159803-71793910138.jpg"
                                            "/slike/oglasi/Thumbs/201227/l/novi-beograd-arena-blok-25-130m2-lux-uknjizen-5425636159803-71793910139.jpg"]
                        :price             260000.0
-                       :floor             7
+                       :floor             "7"
                        :heating_type      "EG"}
           ]
       (let [db-response (dao/insert-real-estate real-estate)]
@@ -117,7 +117,7 @@
           (is (= nil (:furniture db-real-estate)))
           ;its not stored in db since we are collecting only owners ads
           (is (= nil (:advertiser db-real-estate)))
-          (is (== 3.5 (:rooms_number db-real-estate)))
+          (is (= "3.5" (:rooms_number db-real-estate)))
           (is (= "Novi Beograd-Arena-Blok 25-130m2-Lux-Uknjižen ID#1" (:tittle db-real-estate)))
           (is (= "Stan" (:type db-real-estate)))
           (is (= ["https://img.halooglasi.com/slike/oglasi/Thumbs/201227/l/novi-beograd-arena-blok-25-130m2-lux-uknjizen-5425636159803-71793910130.jpg"
@@ -131,7 +131,7 @@
                   "https://img.halooglasi.com/slike/oglasi/Thumbs/201227/l/novi-beograd-arena-blok-25-130m2-lux-uknjizen-5425636159803-71793910138.jpg"
                   "https://img.halooglasi.com/slike/oglasi/Thumbs/201227/l/novi-beograd-arena-blok-25-130m2-lux-uknjizen-5425636159803-71793910139.jpg"] (:pictures db-real-estate)))
           (is (== 260000.0 (:price db-real-estate)))
-          (is (= 7 (:floor db-real-estate)))
+          (is (= "7" (:floor db-real-estate)))
           (is (= "EG" (:heating_type db-real-estate)))
           (is (not (nil? (:created_on db-real-estate))))
           (is (not (nil? (:modified_on db-real-estate))))
@@ -149,12 +149,12 @@
       (is (= nil (:furniture db-real-estate-last)))
       ;its not stored in db since we are collecting only owners ads
       (is (= nil (:advertiser db-real-estate-last)))
-      (is (== 2.5 (:rooms_number db-real-estate-last)))
+      (is (= "2.5" (:rooms_number db-real-estate-last)))
       (is (= "Vracar povoljno" (:tittle db-real-estate-last)))
       (is (= "Stan" (:type db-real-estate-last)))
       (is (= nil (:pictures db-real-estate-last)))
       (is (== 250.0 (:price db-real-estate-last)))
-      (is (= 3 (:floor db-real-estate-last)))
+      (is (= "VPR" (:floor db-real-estate-last)))
       (is (= "CG" (:heating_type db-real-estate-last)))
       (is (not (nil? (:created_on db-real-estate-last))))
       (is (not (nil? (:modified_on db-real-estate-last))))

@@ -52,13 +52,13 @@
 (deftest get-rooms-number-test
   (testing "should return ad rooms-number from a webpage"
     (let [rooms-number (get-rooms-number (fetch-page "resources\\test_files\\sample-ad.html"))]
-      (is (= 3.5 rooms-number))
+      (is (= "3.5" rooms-number))
       )))
 
 (deftest get-floor-test
   (testing "should return ad floor from a webpage"
     (let [floor (get-floor (fetch-page "resources\\test_files\\sample-ad.html"))]
-      (is (= 7 floor))
+      (is (= "7" floor))
       )))
 
 (deftest get-furniture-test
@@ -101,15 +101,51 @@
 (deftest read-ad-test
   (testing "should return ad from a webpage"
     (let [ad (read-ad (fetch-page "resources\\test_files\\sample-ad.html"))]
-      (print ad)
       (is (= "Novi Beograd-Arena-Blok 25-130m2-Lux-Uknjižen ID#1" (:tittle ad)))
       (is (= "44.809900,20.421300" (:geolocation ad)))
       (is (= 260000.0 (:price ad)))
       (is (= 130.0 (:living_space_area ad)))
       (is (= "Agencija" (:advertiser ad)))
       (is (= "Stan" (:type ad)))
-      (is (= 3.5 (:rooms_number ad)))
-      (is (= 7 (:floor ad)))
+      (is (= "3.5" (:rooms_number ad)))
+      (is (= "7" (:floor ad)))
       (is (nil? (:furniture ad)))
       (is (= "EG" (:heating_type ad)))
       )))
+
+(deftest read-ads-list-test
+  (testing "should return list of ads url-s from a page"
+    (let [ad (get-ads-url-list (fetch-page "resources\\test_files\\ads-list-page.html"))]
+      (is (= 20 (count ad)))
+      (is (= ["https://www.halooglasi.com/nekretnine/prodaja-stanova/vozdovac-vojvode-stepe-1-0-35m2-fantastican-p/5425636119609?kid=4"
+              "https://www.halooglasi.com/nekretnine/prodaja-stanova/zvezdara-pancina-2-0-64m2-bez-ag-provizije/5425636143093?kid=4"
+              "https://www.halooglasi.com/nekretnine/prodaja-stanova/vracar-vojvode-hrvoja-14-novogradnja-78-m2/5425636079697?kid=4"
+              "https://www.halooglasi.com/nekretnine/prodaja-stanova/vidikovac-novogradnja/5425636150288?kid=4"
+              "https://www.halooglasi.com/nekretnine/prodaja-stanova/zemun-dvosoban-65m2-funkcionalan-renoviran-mi/5425635968228?kid=4"
+              "https://www.halooglasi.com/nekretnine/prodaja-stanova/cetvorosoban-stan-kod-hrama-svetog-save/5425636147466?kid=4"
+              "https://www.halooglasi.com/nekretnine/prodaja-stanova/novi-beograd-1-5-lux-namesten-sa-garazom-id1/5425636144211?kid=4"
+              "https://www.halooglasi.com/nekretnine/prodaja-stanova/kapije-zlatibora-vila-gruda-lux-apartman/5425636168980?kid=4"
+              "https://www.halooglasi.com/nekretnine/prodaja-stanova/kapije-zlatibora-vila-gradina-lux-apartmani/5425636168972?kid=4"
+              "https://www.halooglasi.com/nekretnine/prodaja-stanova/kapije-zlatibora-vila-gradina-lux-apartmani/5425636168962?kid=4"
+              "https://www.halooglasi.com/nekretnine/prodaja-stanova/dvosoban-stan-blok-70a---delta-city-novi-beog/5425636088499?kid=4"
+              "https://www.halooglasi.com/nekretnine/prodaja-stanova/novogradnja-lekino-brdo-cena-sa-pdv-om/5425635735778?kid=4"
+              "https://www.halooglasi.com/nekretnine/prodaja-stanova/kapije-zlatibora-vila-gradina---lux-apartmani/5425636168957?kid=4"
+              "https://www.halooglasi.com/nekretnine/prodaja-stanova/stari-grad-centar---obilicev-venac/5425636051976?kid=4"
+              "https://www.halooglasi.com/nekretnine/prodaja-stanova/savski-venac-beograd-na-vodi---parkview/5425635281934?kid=4"
+              "https://www.halooglasi.com/nekretnine/prodaja-stanova/dvoiposoban-stan/5425636010977?kid=4"
+              "https://www.halooglasi.com/nekretnine/prodaja-stanova/troiposoban-stan/5425636011343?kid=4"
+              "https://www.halooglasi.com/nekretnine/prodaja-stanova/troiposoban-stan/5425636011334?kid=4"
+              "https://www.halooglasi.com/nekretnine/prodaja-stanova/troiposoban-stan/5425636011245?kid=4"
+              "https://www.halooglasi.com/nekretnine/prodaja-stanova/dvoiposoban-stan/5425636010970?kid=4"] ad))
+      )))
+
+(deftest get-pages-number-test
+  (testing "should return number of pages with ads"
+    (let [pages-number (get-ads-pages-number (fetch-page "resources\\test_files\\ads-list-page.html"))]
+      (is (= 1513 pages-number))
+      )))
+
+(deftest sss-test
+  (testing "should return number of pages with ads"
+    (scraping-ads-urls "https://www.halooglasi.com/nekretnine/prodaja-stanova")
+    ))

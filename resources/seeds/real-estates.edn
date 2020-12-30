@@ -8,7 +8,7 @@
            :tittle            "Novi Beograd Lux"
            :type              "Stan"
            :price             100.0
-           :floor             7
+           :floor             "7"
            :heating_type      "EG"}
           {:url               "www.last.com"
            :description       "Stan na dobroj lokaciji. Po strukturi dvoiposoban, dvostrano orjentisan..."
@@ -19,5 +19,5 @@
            :tittle            "Vracar povoljno"
            :type              "Stan"
            :price             250.0
-           :floor             3
+           :floor             "VPR"
            :heating_type      "CG"}]}]
