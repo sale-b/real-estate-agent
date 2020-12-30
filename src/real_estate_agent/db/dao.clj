@@ -51,5 +51,5 @@
   [id]
   (assoc (first (db/query db
                           ["select * from real_estate_agent_test.public.real_estates re where re.id = ?" id]))
-    :pictures (first (into [] (map :url (db/query db
-                        ["select * from real_estate_agent_test.public.real_estates_images rei where rei.real_estate_id = ?" id]))))))
+    :pictures (into [] (map :url (db/query db
+                        ["select * from real_estate_agent_test.public.real_estates_images rei where rei.real_estate_id = ?" id])))))

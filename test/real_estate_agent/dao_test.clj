@@ -78,7 +78,7 @@
       )))
 
 (deftest insert-real-estate-test
-  (testing "should insert a new user into db and assign him id, created_on, modified on"
+  (testing "should insert a new real estate into db with related pictures in transaction and assign it id, created_on, modified on"
     (let [real-estate {:url "www.test.com"
                        :description       (str "Stan na dobroj lokaciji. Po strukturi troiposoban, dvostrano orjentisan, dva mokra cvora, svetao i komforan. "
                                                "Kompletno renoviran i ne zahteva dodatna ulaganja. Uknjizen na 110m2 ali mereno sa terasamo stan ima 130m2.  "
