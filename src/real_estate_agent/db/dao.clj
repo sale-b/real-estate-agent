@@ -27,6 +27,35 @@
   (first (db/query db
                    ["select * from users where id = ?" id])))
 
+(defn get-user-by-email
+  [email]
+  (first (db/query db
+                   ["select * from users where email = ?" email])))
+
+(defn insert-session
+  [session]
+  (first (db/insert! db :persistent_logins session)))
+
+(defn get-unexpired-session
+  [token token-duration]
+  (first (db/query db
+                   ["select *
+                   from persistent_logins
+                   where token = ?
+                   and (SELECT EXTRACT(EPOCH FROM (current_timestamp - last_used)) < ?)" token token-duration])))
+
+(defn update-session-duration-by-id
+  [id]
+  (db/update! db :persistent_logins
+              {:last_used (java.util.Date.)}
+              ["id = ?" id]))
+
+(defn get-user-by-email-and-pass
+  [email pass]
+  (first (db/query db
+                   ["select * from users where email = ? and password = ?" email pass])))
+
+
 (defn update-user
   [user]
   (db/update! db :users
@@ -47,12 +76,6 @@
                                                                                                                  {:url            (str "https://img.halooglasi.com" picture)
                                                                                                                   :real_estate_id (:id db-real-estate)}))))))))
 
-(defn get-real-estate-by-id
-  [id]
-  (assoc (first (db/query db
-                          ["select * from real_estates where re.id = ?" id]))
-    :pictures (into [] (map :url (db/query db
-                                           ["select * from real_estates_images where real_estate_id = ?" id])))))
 
 (defn get-real-estate-by-id
   [id]

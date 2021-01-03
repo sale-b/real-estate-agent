@@ -7,8 +7,7 @@
 
 (deftest insert-user-test
   (testing "should insert a new user into db and assign him id, created_on, modified on"
-    (let [user {:username "test",
-                :password "test",
+    (let [user {:password "test",
                 :email    "test@test.com",
                 :enabled  false}
           ]
@@ -17,7 +16,6 @@
         (is (not (nil? (:id db-response))))
         (let [db-user (dao/get-user-by-id (:id db-response))]
           (is (not (nil? db-user)))
-          (is (= "test" (:username db-user)))
           (is (= "test" (:password db-user)))
           (is (= "test@test.com" (:email db-user)))
           (is (= false (:enabled db-user)))
@@ -25,13 +23,12 @@
           (is (not (nil? (:modified_on db-user))))
           )))))
 
-(deftest get-user-test
+(deftest get-user-by-id-test
   (testing "should return user wih id 1"
     (let [u (dao/get-user-by-id 1)]
       (is (not (empty? u)))
       (is (not (nil? u)))
       (is (= 1 (:id u)))
-      (is (= "admin" (:username u)))
       (is (= "admin" (:password u)))
       (is (= "admin@admin.com" (:email u)))
       (is (= true (:enabled u)))
@@ -43,12 +40,37 @@
       (is (not (empty? u)))
       (is (not (nil? u)))
       (is (= 2 (:id u)))
-      (is (= "user" (:username u)))
       (is (= "user" (:password u)))
       (is (= "user@user.com" (:email u)))
       (is (= true (:enabled u)))
       (is (= #inst "2020-12-28T15:09:17.437000000-00:00" (:created_on u)))
       (is (not (= #inst "2020-12-28T15:09:17.437000000-00:00" (:modified_on u))))
+      )))
+
+(deftest get-user-by-email-test
+  (testing "should return user wih email admin@admin.com"
+    (let [u (dao/get-user-by-email "admin@admin.com")]
+      (is (not (empty? u)))
+      (is (not (nil? u)))
+      (is (= 1 (:id u)))
+      (is (= "admin" (:password u)))
+      (is (= "admin@admin.com" (:email u)))
+      (is (= true (:enabled u)))
+      (is (= #inst "2020-12-28T15:09:16.437000000-00:00" (:created_on u)))
+      (is (= #inst "2020-12-28T15:09:16.437000000-00:00" (:modified_on u)))
+      )))
+
+(deftest get-user-by-email-and-pass-test
+  (testing "should return user wih email admin@admin.com and pass admin"
+    (let [u (dao/get-user-by-email-and-pass "admin@admin.com" "admin")]
+      (is (not (empty? u)))
+      (is (not (nil? u)))
+      (is (= 1 (:id u)))
+      (is (= "admin" (:password u)))
+      (is (= "admin@admin.com" (:email u)))
+      (is (= true (:enabled u)))
+      (is (= #inst "2020-12-28T15:09:16.437000000-00:00" (:created_on u)))
+      (is (= #inst "2020-12-28T15:09:16.437000000-00:00" (:modified_on u)))
       )))
 
 (deftest update-user-test
@@ -60,7 +82,6 @@
       (is (not (empty? u)))
       (is (not (nil? u)))
       (is (= 1 (:id u)))
-      (is (= "admin" (:username u)))
       (is (= "password" (:password u)))
       (is (= "admin@admin.com" (:email u)))
       (is (= true (:enabled u)))
@@ -76,6 +97,31 @@
     (let [u (dao/get-user-by-id 1)]
       (is (nil? u))
       )))
+
+(deftest insert-session-test
+  (testing "should insert a new session into db, retrieve that session and update last_used timestamp"
+    (let [session {:email "test@test.com",
+                   :token "bdfff95c-3803-4874-b70c-2f2adc69a2ab"}
+          ]
+      (let [db-response (dao/insert-session session)]
+        (is (not (nil? db-response)))
+        (is (not (nil? (:id db-response))))
+        ;session is unexpired if it is under 50 seconds old
+        (let [db-session (dao/get-unexpired-session "bdfff95c-3803-4874-b70c-2f2adc69a2ab" 50)]
+          (is (not (nil? db-session)))
+          (is (= "test@test.com" (:email db-session)))
+          (is (= "bdfff95c-3803-4874-b70c-2f2adc69a2ab" (:token db-session)))
+          (is (not (nil? (:last_used db-session))))
+          (dao/update-session-duration-by-id (:id db-session))
+          (let [updated-db-session (dao/get-unexpired-session "bdfff95c-3803-4874-b70c-2f2adc69a2ab" 50)]
+            (is (not (nil? updated-db-session)))
+            (is (= "test@test.com" (:email db-session)))
+            (is (= "bdfff95c-3803-4874-b70c-2f2adc69a2ab" (:token db-session)))
+            (is (< 0 (- (inst-ms (:last_used updated-db-session)) (inst-ms (:last_used db-session)))))
+            )
+          ;expectiong nil because there are no expired sessions with this token
+          (is (nil? (dao/get-unexpired-session "bdfff95c-3803-4874-b70c-2f2adc69a2ab" -5)))
+          )))))
 
 (deftest insert-real-estate-test
   (testing "should insert a new real estate into db with related pictures in transaction and assign it id, created_on, modified on"

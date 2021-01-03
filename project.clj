@@ -16,7 +16,8 @@
                  [metosin/ring-http-response "0.9.1"]
                  [compojure "1.6.2"]
                  [overtone/at-at "1.2.0"]
-                 [clj-time "0.15.2"]]
+                 [clj-time "0.15.2"]
+                 [cljts "0.2.0"]]
 
   :plugins [[lein-environ "1.2.0"]
             [lein-ancient "0.6.15"]]

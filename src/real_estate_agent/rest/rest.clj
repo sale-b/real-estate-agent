@@ -13,12 +13,21 @@
              :access-control-allow-origin [#"http://localhost:8080"]
              :access-control-allow-methods [:get :put :post :delete :options]
              :access-control-allow-headers #{"accept"
+                                             "accept-encoding"
+                                             "accept-language"
+                                             "authorization"
                                              "content-type"
-                                             "custom-header"
-                                             }))
+                                             "origin"
+                                             "Custom-Header"
+                                             "Date"
+                                             "x-auth-token"
+                                             }
+             :access-control-expose-headers #{"x-auth-token"}))
 
 (defroutes my-routes
-           (GET "/user/:id" [id] (service/get-user id))
+           (POST "/register" [] (fn [req] (service/register (:body req))))
+           (POST "/login" [] (fn [req] (service/login (:body req))))
+           (GET "/user/:id" [id] (fn [req] (service/get-user id (:headers req))))
            (route/resources "/"))
 
 (def app (wrap-json-response (wrap-json-body (cors-handler my-routes) {:keywords? true})))

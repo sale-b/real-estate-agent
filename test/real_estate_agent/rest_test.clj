@@ -9,21 +9,31 @@
 (deftest test-get-url-route
   (testing "should respond with a 400 if the specified user does not exist"
     (let [req {:request-method :get
-               :uri "/user/5"}
+               :uri            "/user/5"
+               :headers        {"x-auth-token" "334513c6-139c-4393-b91e-03224461e38d"}
+               }
           res (app req)]
       (is (= (:status res)
              400))))
   (testing "should respond with the user if it exists."
     (let [req {:request-method :get
-               :uri "/user/1"}
+               :uri            "/user/1"
+               :headers        {"x-auth-token" "334513c6-139c-4393-b91e-03224461e38d"}
+               }
           res (app req)
           body (json/read-str (:body res)
                               :key-fn keyword)]
-      (is (= {:id 1,
-              :username "admin",
-              :password "admin",
-              :email "admin@admin.com",
-              :enabled true,
-              :created_on "2020-12-28T15:09:16Z",
+      (is (= {:id          1,
+              :password    "admin",
+              :email       "admin@admin.com",
+              :enabled     true,
+              :created_on  "2020-12-28T15:09:16Z",
               :modified_on "2020-12-28T15:09:16Z"}
-             body)))))
+             body))
+      ))
+  (testing "should respond with the status 400 if not authorized."
+    (let [req {:request-method :get
+               :uri            "/user/1"}
+          res (app req)]
+      (is (= (:status res) 400))
+      )))

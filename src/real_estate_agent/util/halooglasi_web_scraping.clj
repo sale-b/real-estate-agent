@@ -92,7 +92,7 @@
 (defn scraping-ads-urls [url]
   (loop [page-number 1]
     (when (<= page-number (get-ads-pages-number (html-page url)))
-      (doseq [current-url (get-ads-url-list (html-page (str url "?page=" page-number)))]
+      (doseq [current-url (get-ads-url-list (html-page (str url "&page=" page-number)))]
         ;(println current-url)
         (if (= current-url last-inserted-url) (throw (new RuntimeException "Reached last inserted url")))
         (try

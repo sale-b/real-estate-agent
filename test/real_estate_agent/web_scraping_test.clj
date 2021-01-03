@@ -145,7 +145,7 @@
       (is (= 1513 pages-number))
       )))
 
-(deftest sss-test
-  (testing "should return number of pages with ads"
-    (scraping-ads-urls "https://www.halooglasi.com/nekretnine/prodaja-stanova")
-    ))
+;(deftest sss-test
+;  (testing "should return number of pages with ads"
+;    (scraping-ads-urls "https://www.halooglasi.com/nekretnine/prodaja-stanova?oglasivac_nekretnine_id_l=387237")
+;    ))

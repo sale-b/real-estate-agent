@@ -26,7 +26,6 @@ CREATE TABLE real_estates_images (
 
 create table users(
     id serial primary key,
-	username varchar(50) not null unique,
 	password varchar(50) not null,
 	email varchar(50) unique,
 	enabled boolean not null,
@@ -38,7 +37,7 @@ create table users(
 
 create table persistent_logins (
     id serial primary key,
-	username varchar(64) not null,
+	email varchar(64) not null,
 	token varchar(64) not null,
-	last_used timestamp not null
+	last_used timestamp default current_timestamp not null
 );
