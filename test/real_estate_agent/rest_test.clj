@@ -24,11 +24,7 @@
           body (json/read-str (:body res)
                               :key-fn keyword)]
       (is (= {:id          1,
-              :password    "admin",
-              :email       "admin@admin.com",
-              :enabled     true,
-              :created_on  "2020-12-28T15:09:16Z",
-              :modified_on "2020-12-28T15:09:16Z"}
+              :email       "admin@admin.com"}
              body))
       ))
   (testing "should respond with the status 400 if not authorized."

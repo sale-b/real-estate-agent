@@ -100,7 +100,7 @@
 
 (deftest insert-session-test
   (testing "should insert a new session into db, retrieve that session and update last_used timestamp"
-    (let [session {:email "test@test.com",
+    (let [session {:user_id 2,
                    :token "bdfff95c-3803-4874-b70c-2f2adc69a2ab"}
           ]
       (let [db-response (dao/insert-session session)]
@@ -109,13 +109,13 @@
         ;session is unexpired if it is under 50 seconds old
         (let [db-session (dao/get-unexpired-session "bdfff95c-3803-4874-b70c-2f2adc69a2ab" 50)]
           (is (not (nil? db-session)))
-          (is (= "test@test.com" (:email db-session)))
+          (is (= 2 (:user_id db-session)))
           (is (= "bdfff95c-3803-4874-b70c-2f2adc69a2ab" (:token db-session)))
           (is (not (nil? (:last_used db-session))))
           (dao/update-session-duration-by-id (:id db-session))
           (let [updated-db-session (dao/get-unexpired-session "bdfff95c-3803-4874-b70c-2f2adc69a2ab" 50)]
             (is (not (nil? updated-db-session)))
-            (is (= "test@test.com" (:email db-session)))
+            (is (= 2 (:user_id db-session)))
             (is (= "bdfff95c-3803-4874-b70c-2f2adc69a2ab" (:token db-session)))
             (is (< 0 (- (inst-ms (:last_used updated-db-session)) (inst-ms (:last_used db-session)))))
             )

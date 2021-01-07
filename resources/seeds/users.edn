@@ -7,4 +7,8 @@
          {:email "user@user.com"
           :password "user"
           :enabled true
-          :created_on #inst "2020-12-28T15:09:17.437Z"}]}]
+          :created_on #inst "2020-12-28T15:09:17.437Z"}]}
+ {:table :persistent_logins
+  :data [{:user_id 1
+          :token "334513c6-139c-4393-b91e-03224461e38d"}]}]
+

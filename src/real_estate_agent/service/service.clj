@@ -14,16 +14,21 @@
   (= 1 (first (dao/update-session-duration-by-id
                 (:id (dao/get-unexpired-session token (cast/string-to-int (:session-allowed-inactivity-seconds env))))))))
 
+(defn authorized-identity? [token id]
+  (let [session (dao/get-unexpired-session token (cast/string-to-int (:session-allowed-inactivity-seconds env)))]
+    (if (= (cast/string-to-int id) (:user_id session))
+      (= 1 (first (dao/update-session-duration-by-id (:id session)))))))
+
 (defn get-user
   [id request-headers]
   (if (nil? request-headers)
-    (bad-request "Not autorized!")
-    (if (authorized? (request-headers "x-auth-token"))
+    (bad-request "Not authorized!")
+    (if (authorized-identity? (request-headers "x-auth-token") id)
       (let [u (dao/get-user-by-id (cast/string-to-long id))]
         (if (empty? u)
           (bad-request "User not found!")
-          (response u)))
-      (bad-request "Not autorized!"))))
+          (response {:id (:id u) :email (:email u)})))
+      (bad-request "Not authorized!"))))
 
 (defn register
   [user]
@@ -41,7 +46,7 @@
       (bad-request "Incorrect username or password!")
       (if (= true (:enabled db-user))
         (let [token (random-uuid)]
-          (dao/insert-session {:email (:email db-user) :token token})
+          (dao/insert-session {:user_id (:id db-user) :token token})
           (header (response db-user) "x-auth-token" token))
         (bad-request "User is blocked!"))
       )))

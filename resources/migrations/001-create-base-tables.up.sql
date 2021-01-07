@@ -25,7 +25,7 @@ CREATE TABLE real_estates_images (
 );
 
 create table users(
-    id serial primary key,
+    id bigserial primary key,
 	password varchar(50) not null,
 	email varchar(50) unique,
 	enabled boolean not null,
@@ -36,8 +36,12 @@ create table users(
 
 
 create table persistent_logins (
-    id serial primary key,
-	email varchar(64) not null,
+    id bigserial primary key,
+	user_id bigint not null,
 	token varchar(64) not null,
-	last_used timestamp default current_timestamp not null
+	last_used timestamp default current_timestamp not null,
+	CONSTRAINT fk_user_session
+          FOREIGN KEY(user_id)
+      	  REFERENCES users(id)
+      	  ON DELETE CASCADE
 );

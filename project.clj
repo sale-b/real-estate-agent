@@ -17,7 +17,8 @@
                  [compojure "1.6.2"]
                  [overtone/at-at "1.2.0"]
                  [clj-time "0.15.2"]
-                 [cljts "0.2.0"]]
+                 [cljts "0.2.0"]
+                 [crypto-password "0.2.1"]]
 
   :plugins [[lein-environ "1.2.0"]
             [lein-ancient "0.6.15"]]
