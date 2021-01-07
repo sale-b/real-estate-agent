@@ -23,7 +23,7 @@
           res (app req)
           body (json/read-str (:body res)
                               :key-fn keyword)]
-      (is (= {:id          1,
+      (is (= {:id          1
               :email       "admin@admin.com"}
              body))
       ))

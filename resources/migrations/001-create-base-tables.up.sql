@@ -26,7 +26,7 @@ CREATE TABLE real_estates_images (
 
 create table users(
     id bigserial primary key,
-	password varchar(50) not null,
+	password varchar(255) not null,
 	email varchar(50) unique,
 	enabled boolean not null,
 	created_on timestamp default current_timestamp not null,

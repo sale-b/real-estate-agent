@@ -1,7 +1,8 @@
 (ns real-estate-agent.dao-test
   (:require [clojure.test :refer :all]
             [test-helpers :refer [with-database-reset]]
-            [real-estate-agent.db.dao :as dao]))
+            [real-estate-agent.db.dao :as dao]
+            [crypto.password.scrypt :as password]))
 
 (use-fixtures :each with-database-reset)
 
@@ -16,7 +17,7 @@
         (is (not (nil? (:id db-response))))
         (let [db-user (dao/get-user-by-id (:id db-response))]
           (is (not (nil? db-user)))
-          (is (= "test" (:password db-user)))
+          (is (password/check "test" (:password db-user)))
           (is (= "test@test.com" (:email db-user)))
           (is (= false (:enabled db-user)))
           (is (not (nil? (:created_on db-user))))
@@ -29,7 +30,7 @@
       (is (not (empty? u)))
       (is (not (nil? u)))
       (is (= 1 (:id u)))
-      (is (= "admin" (:password u)))
+      (is (password/check "admin" (:password u)))
       (is (= "admin@admin.com" (:email u)))
       (is (= true (:enabled u)))
       (is (= #inst "2020-12-28T15:09:16.437000000-00:00" (:created_on u)))
@@ -40,7 +41,7 @@
       (is (not (empty? u)))
       (is (not (nil? u)))
       (is (= 2 (:id u)))
-      (is (= "user" (:password u)))
+      (is (password/check "user" (:password u)))
       (is (= "user@user.com" (:email u)))
       (is (= true (:enabled u)))
       (is (= #inst "2020-12-28T15:09:17.437000000-00:00" (:created_on u)))
@@ -53,20 +54,7 @@
       (is (not (empty? u)))
       (is (not (nil? u)))
       (is (= 1 (:id u)))
-      (is (= "admin" (:password u)))
-      (is (= "admin@admin.com" (:email u)))
-      (is (= true (:enabled u)))
-      (is (= #inst "2020-12-28T15:09:16.437000000-00:00" (:created_on u)))
-      (is (= #inst "2020-12-28T15:09:16.437000000-00:00" (:modified_on u)))
-      )))
-
-(deftest get-user-by-email-and-pass-test
-  (testing "should return user wih email admin@admin.com and pass admin"
-    (let [u (dao/get-user-by-email-and-pass "admin@admin.com" "admin")]
-      (is (not (empty? u)))
-      (is (not (nil? u)))
-      (is (= 1 (:id u)))
-      (is (= "admin" (:password u)))
+      (is (password/check "admin" (:password u)))
       (is (= "admin@admin.com" (:email u)))
       (is (= true (:enabled u)))
       (is (= #inst "2020-12-28T15:09:16.437000000-00:00" (:created_on u)))

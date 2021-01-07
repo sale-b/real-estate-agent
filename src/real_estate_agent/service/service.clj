@@ -2,6 +2,7 @@
   (:require [real-estate-agent.db.dao :as dao]
             [real-estate-agent.util.cast :as cast]
             [environ.core :refer [env]]
+            [crypto.password.scrypt :as password]
             [cljts.geom :as geom]
             [cljts.prep :as prep]
             [cljts.relation :as relation]
@@ -34,22 +35,27 @@
   [user]
   (let [db-user (dao/get-user-by-email (:email user))]
     (if (nil? db-user)
-      (response (dao/insert-user (assoc user :enabled true)))
+      (let [token (random-uuid) db-user (dao/insert-user (assoc user :enabled true))]
+        (dao/insert-session {:user_id (:id db-user) :token token})
+        (header (response (dissoc db-user :password)) "x-auth-token" token))
       (bad-request "E-mail is already registered!")))
   )
 
 
 (defn login
   [user]
-  (let [db-user (dao/get-user-by-email-and-pass (:email user) (:password user))]
+  (let [db-user (dao/get-user-by-email (:email user))]
     (if (nil? db-user)
       (bad-request "Incorrect username or password!")
-      (if (= true (:enabled db-user))
-        (let [token (random-uuid)]
-          (dao/insert-session {:user_id (:id db-user) :token token})
-          (header (response db-user) "x-auth-token" token))
-        (bad-request "User is blocked!"))
+      (if (password/check (:password user) (:password db-user))
+        (if (:enabled db-user)
+          (let [token (random-uuid)]
+            (dao/insert-session {:user_id (:id db-user) :token token})
+            (header (response (dissoc db-user :password)) "x-auth-token" token))
+          (bad-request "User is blocked!"))
+        (bad-request "Incorrect username or password!"))
       )))
+
 
 ;(defn is-geolocation-satisfied?
 ;  [id]

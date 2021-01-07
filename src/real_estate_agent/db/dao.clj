@@ -2,7 +2,8 @@
   (:import [java.sql PreparedStatement])
   (:require [clojure.java.jdbc :as db]
             [environ.core :refer [env]]
-            [clj-time.coerce :as c])
+            [clj-time.coerce :as c]
+            [crypto.password.scrypt :as password])
   (:use ring.util.response))
 
 (extend-type java.util.Date
@@ -20,7 +21,7 @@
 
 (defn insert-user
   [user]
-  (first (db/insert! db :users user)))
+  (first (db/insert! db :users (assoc user :password (password/encrypt (:password user))))))
 
 (defn get-user-by-id
   [id]
@@ -49,11 +50,6 @@
   (db/update! db :persistent_logins
               {:last_used (java.util.Date.)}
               ["id = ?" id]))
-
-(defn get-user-by-email-and-pass
-  [email pass]
-  (first (db/query db
-                   ["select * from users where email = ? and password = ?" email pass])))
 
 
 (defn update-user
