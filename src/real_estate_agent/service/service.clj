@@ -56,6 +56,21 @@
         (bad-request "Incorrect username or password!"))
       )))
 
+(defn make-short-description
+  [description]
+  (if (< 100 (count description))
+    (str (subs description 0 101) "...")
+    description))
+
+(defn get-ads-paged
+  [current-page]
+  (if (>  (cast/string-to-int current-page) 0)
+    (response (let [db-page (vec (dao/get-paged-real-estates (-  (cast/string-to-int current-page) 1)))]
+    {:ads        (vec (map #(update-in % [:description] make-short-description) db-page))
+     :pagination {:currentPage         (cast/string-to-int current-page)
+                  :totalPages (int (:total_pages (dao/get-total-pages-number)))}
+     }))
+    (bad-request "Page number must be higher than zero.")))
 
 ;(defn is-geolocation-satisfied?
 ;  [id]

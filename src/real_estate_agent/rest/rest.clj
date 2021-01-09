@@ -28,6 +28,7 @@
            (POST "/register" [] (fn [req] (service/register (:body req))))
            (POST "/login" [] (fn [req] (service/login (:body req))))
            (GET "/user/:id" [id] (fn [req] (service/get-user id (:headers req))))
+           (GET "/page/:page" [page] (service/get-ads-paged page))
            (route/resources "/"))
 
 (def app (wrap-json-response (wrap-json-body (cors-handler my-routes) {:keywords? true})))

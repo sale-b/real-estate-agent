@@ -19,6 +19,8 @@
    :host     (:database-host env)
    :port     (:database-port env)})
 
+(def page-size 10)
+
 (defn insert-user
   [user]
   (first (db/insert! db :users (assoc user :password (password/encrypt (:password user))))))
@@ -79,6 +81,24 @@
                           ["select * from real_estates where id = ?" id]))
     :pictures (into [] (map :url (db/query db
                                            ["select * from real_estates_images where real_estate_id = ?" id])))))
+
+(defn get-paged-real-estates
+  [page-number]
+  (db/query db
+            [(str "select  distinct on (id) re.id, re.price, re.\"type\", re.rooms_number, re.floor, re.description, re.living_space_area, re.furniture, re.heating_type, re.created_on, rei.url as img_url "
+                  "from real_estates re "
+                  "left join real_estates_images  rei "
+                  "on   re.id = "
+                  "( "
+                  "select rei.real_estate_id from real_estates_images where real_estate_id = re.id order by id limit 1 "
+                  ") "
+                  "order by re.id desc "
+                  "limit ? "                                ;ads per page
+                  "offset ?") page-size (* page-size page-number)]))
+
+(defn get-total-pages-number
+  []
+  (first (db/query db ["select greatest(ceiling(count(id) / ?), 1) as total_pages from real_estates" page-size])))
 
 (defn get-last-inserted-real-estate
   []
