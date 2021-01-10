@@ -19,6 +19,12 @@
     (is (= "44.809900,20.421300" coordinates))
     )))
 
+(deftest get-phone-test
+  (testing "should return phone from a webpage"
+    (let [phone (get-phone (fetch-page "resources\\test_files\\sample-ad.html"))]
+      (is (= "065/662-3984" phone))
+      )))
+
 (deftest get-price-test
   (testing "should return ad price from a webpage"
     (let [price (get-price (fetch-page "resources\\test_files\\sample-ad.html"))]
@@ -111,6 +117,7 @@
       (is (= "7" (:floor ad)))
       (is (nil? (:furniture ad)))
       (is (= "EG" (:heating_type ad)))
+      (is (= "065/662-3984" (:phone ad)))
       )))
 
 (deftest read-ads-list-test

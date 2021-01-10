@@ -135,6 +135,7 @@
                                            "/slike/oglasi/Thumbs/201227/l/novi-beograd-arena-blok-25-130m2-lux-uknjizen-5425636159803-71793910138.jpg"
                                            "/slike/oglasi/Thumbs/201227/l/novi-beograd-arena-blok-25-130m2-lux-uknjizen-5425636159803-71793910139.jpg"]
                        :price             260000.0
+                       :phone             "061/33-33-33"
                        :floor             "7"
                        :heating_type      "EG"}
           ]
@@ -165,6 +166,7 @@
                   "https://img.halooglasi.com/slike/oglasi/Thumbs/201227/l/novi-beograd-arena-blok-25-130m2-lux-uknjizen-5425636159803-71793910138.jpg"
                   "https://img.halooglasi.com/slike/oglasi/Thumbs/201227/l/novi-beograd-arena-blok-25-130m2-lux-uknjizen-5425636159803-71793910139.jpg"] (:pictures db-real-estate)))
           (is (== 260000.0 (:price db-real-estate)))
+          (is (= "061/33-33-33" (:phone db-real-estate)))
           (is (= "7" (:floor db-real-estate)))
           (is (= "EG" (:heating_type db-real-estate)))
           (is (not (nil? (:created_on db-real-estate))))
@@ -188,6 +190,7 @@
       (is (= "Stan" (:type db-real-estate-last)))
       (is (= nil (:pictures db-real-estate-last)))
       (is (== 250.0 (:price db-real-estate-last)))
+      (is (= "062/222-22-22" (:phone  db-real-estate-last)))
       (is (= "VPR" (:floor db-real-estate-last)))
       (is (= "CG" (:heating_type db-real-estate-last)))
       (is (not (nil? (:created_on db-real-estate-last))))

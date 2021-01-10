@@ -2,12 +2,13 @@
   :data  [{:url               "www.test.com"
            :description       "Stan na dobroj lokaciji. Po strukturi troiposoban, dvostrano orjentisan, dva mokra cvora."
            :living_space_area 50.0
-           :geolocation       "44.55555,20.22222"
+           :geolocation       "20.448792,44.8148"
            :furniture         nil
            :rooms_number      3.5
            :tittle            "Novi Beograd Lux"
            :type              "Stan"
            :price             100.0
+           :phone             "061/11-1111"
            :floor             "7"
            :heating_type      "EG"}
           {:url               "www.last.com"
@@ -19,5 +20,24 @@
            :tittle            "Vracar povoljno"
            :type              "Stan"
            :price             250.0
+           :phone             "062/222-22-22"
            :floor             "VPR"
-           :heating_type      "CG"}]}]
+           :heating_type      "CG"}]}
+
+ {:table :real_estates_images
+  :data  [{:url            "https://img.halooglasi.com/slike/oglasi/Thumbs/200504/l/lux-popuno-opremljen-dupleks-5425635419923-71791237852.jpg"
+           :real_estate_id 1}
+          {:url            "https://img.halooglasi.com/slike/oglasi/Thumbs/200504/l/lux-popuno-opremljen-dupleks-5425635419923-71791237856.jpg"
+           :real_estate_id 1}
+          {:url            "https://img.halooglasi.com/slike/oglasi/Thumbs/200504/l/lux-popuno-opremljen-dupleks-5425635419923-71791237855.jpg"
+           :real_estate_id 1}
+          {:url            "https://img.halooglasi.com/slike/oglasi/Thumbs/200504/l/lux-popuno-opremljen-dupleks-5425635419923-71791237857.jpg"
+           :real_estate_id 1}
+          {:url            "https://img.halooglasi.com/slike/oglasi/Thumbs/200504/l/lux-popuno-opremljen-dupleks-5425635419923-71791237860.jpg"
+           :real_estate_id 1}
+          {:url            "https://img.halooglasi.com/slike/oglasi/Thumbs/200504/l/lux-popuno-opremljen-dupleks-5425635419923-71791237859.jpg"
+           :real_estate_id 1}
+          {:url            "https://img.halooglasi.com/slike/oglasi/Thumbs/200504/l/lux-popuno-opremljen-dupleks-5425635419923-71791237858.jpg"
+           :real_estate_id 1}
+          {:url            "https://img.halooglasi.com/slike/oglasi/Thumbs/200504/l/lux-popuno-opremljen-dupleks-5425635419923-71791237854.jpg"
+           :real_estate_id 1}]}]

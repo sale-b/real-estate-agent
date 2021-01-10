@@ -85,7 +85,7 @@
 (defn get-paged-real-estates
   [page-number]
   (db/query db
-            [(str "select  distinct on (id) re.id, re.price, re.\"type\", re.rooms_number, re.floor, re.description, re.living_space_area, re.furniture, re.heating_type, re.created_on, rei.url as img_url "
+            [(str "select  distinct on (id) re.id, re.tittle, re.phone, re.price, re.\"type\", re.rooms_number, re.floor, re.description, re.living_space_area, re.furniture, re.heating_type, re.created_on, rei.url as img_url "
                   "from real_estates re "
                   "left join real_estates_images  rei "
                   "on   re.id = "

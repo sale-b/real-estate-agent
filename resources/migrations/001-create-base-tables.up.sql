@@ -1,6 +1,7 @@
 CREATE TABLE real_estates (
   id bigserial primary key,
   tittle varchar(100) not null,
+  phone varchar (20) not null,
   price numeric not null,
   type varchar(10) not null,
   rooms_number varchar(10),

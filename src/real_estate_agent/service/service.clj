@@ -62,6 +62,13 @@
     (str (subs description 0 101) "...")
     description))
 
+(defn get-ad-by-id
+  [id]
+  (let [ad (dao/get-real-estate-by-id (cast/string-to-long id))]
+    (if (nil? ad)
+      (bad-request "Ad is not found")
+      (response ad))))
+
 (defn get-ads-paged
   [current-page]
   (if (>  (cast/string-to-int current-page) 0)

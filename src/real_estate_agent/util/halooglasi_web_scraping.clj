@@ -21,9 +21,19 @@
                                 [:script]))) "QuidditaEnvironment.CurrentClassified=" "; for (var")
     :key-fn keyword))
 
+(defn contact-data [page]
+  (json/read-str
+    (get-substring (some #(and (clojure.string/includes? % "Phone1") %)
+                         (map html/text
+                              (html/select
+                                page
+                                [:script]))) "QuidditaEnvironment.CurrentContactData=" ";QuidditaEnvironment")
+    :key-fn keyword))
+
 (defn get-tittle [page]
   (:content (:attrs (first (filter #(= (:property (:attrs %)) "og:title")
                                    (html/select page [:head :meta]))))))
+
 (defn get-price [page]
   (:cena_d (:OtherFields (ad-content page))))
 
@@ -58,6 +68,9 @@
 (defn get-geolocation [page]
   (:GeoLocationRPT (ad-content page)))
 
+(defn get-phone [page]
+  (:Phone1 (first (:ContactInfos (:Advertiser (contact-data page))))))
+
 (defn read-ad [page]
   {:tittle            (get-tittle page)
    :price             (get-price page)
@@ -71,6 +84,7 @@
    :heating_type      (get-heating page)
    :pictures          (get-pictures page)
    :advertiser        (get-advertiser page)
+   :phone             (get-phone page)
    })
 
 (defn get-ads-url-list [page]
@@ -96,10 +110,10 @@
         ;(println current-url)
         (if (= current-url last-inserted-url) (throw (new RuntimeException "Reached last inserted url")))
         (try
-        (dao/insert-real-estate
-          (assoc (read-ad
-            (html-page current-url))
-            :url current-url))
-        (catch org.postgresql.util.PSQLException e (println (str "CAUGHT EXCEPTION: " (.getMessage e) " " current-url)))))
+          (dao/insert-real-estate
+            (assoc (read-ad
+                     (html-page current-url))
+              :url current-url))
+          (catch org.postgresql.util.PSQLException e (println (str "CAUGHT EXCEPTION: " (.getMessage e) " " current-url)))))
       (recur (+ page-number 1))))
   )
