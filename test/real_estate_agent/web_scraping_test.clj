@@ -127,7 +127,7 @@
       (is (= 130.0 (:living_space_area ad)))
       (is (= "Agencija" (:advertiser ad)))
       (is (= "Stan" (:type ad)))
-      (is (= "3.5" (:rooms_number ad)))
+      (is (= 3.5 (:rooms_number ad)))
       (is (= "7" (:floor ad)))
       (is (nil? (:furniture ad)))
       (is (= "EG" (:heating_type ad)))

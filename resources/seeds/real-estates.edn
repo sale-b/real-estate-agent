@@ -17,8 +17,8 @@
            :description       "Stan na dobroj lokaciji. Po strukturi dvoiposoban, dvostrano orjentisan..."
            :living_space_area 60.0
            :geolocation       "44.123123,20.123456"
-           :location          "Opština Novi Beograd"
-           :micro_location    "Fontana"
+           :location          "Opština Vračаr"
+           :micro_location    "Franš"
            :furniture         nil
            :rooms_number      2.5
            :tittle            "Vracar povoljno"

@@ -4,7 +4,7 @@ CREATE TABLE real_estates (
   phone varchar (20) not null,
   price numeric not null,
   type varchar(10) not null,
-  rooms_number varchar(10),
+  rooms_number numeric not null,
   floor varchar(10),
   description varchar not null,
   location varchar(100) not null,

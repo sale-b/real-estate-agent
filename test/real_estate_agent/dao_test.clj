@@ -156,7 +156,7 @@
           (is (= nil (:furniture db-real-estate)))
           ;its not stored in db since we are collecting only owners ads
           (is (= nil (:advertiser db-real-estate)))
-          (is (= "3.5" (:rooms_number db-real-estate)))
+          (is (== 3.5 (:rooms_number db-real-estate)))
           (is (= "Novi Beograd-Arena-Blok 25-130m2-Lux-Uknjižen ID#1" (:tittle db-real-estate)))
           (is (= "Stan" (:type db-real-estate)))
           (is (= ["https://img.halooglasi.com/slike/oglasi/Thumbs/201227/l/novi-beograd-arena-blok-25-130m2-lux-uknjizen-5425636159803-71793910130.jpg"
@@ -186,12 +186,12 @@
       (is (= "Stan na dobroj lokaciji. Po strukturi dvoiposoban, dvostrano orjentisan..." (:description db-real-estate-last)))
       (is (== 60.0 (:living_space_area db-real-estate-last)))
       (is (= "44.123123,20.123456" (:geolocation db-real-estate-last)))
-      (is (= "Opština Novi Beograd" (:location db-real-estate-last)))
-      (is (= "Fontana" (:micro_location db-real-estate-last)))
+      (is (= "Opština Vračаr" (:location db-real-estate-last)))
+      (is (= "Franš" (:micro_location db-real-estate-last)))
       (is (= nil (:furniture db-real-estate-last)))
       ;its not stored in db since we are collecting only owners ads
       (is (= nil (:advertiser db-real-estate-last)))
-      (is (= "2.5" (:rooms_number db-real-estate-last)))
+      (is (== 2.5 (:rooms_number db-real-estate-last)))
       (is (= "Vracar povoljno" (:tittle db-real-estate-last)))
       (is (= "Stan" (:type db-real-estate-last)))
       (is (= nil (:pictures db-real-estate-last)))
@@ -209,7 +209,7 @@
       (is (not (empty? locations)))
       (is (not (nil? locations)))
       (is (= "Opština Novi Beograd" (:location (first locations))))
-      (is (= 1 (count locations)))
+      (is (= 2 (count locations)))
       )))
 
 (deftest get-all-micro-locations-test
@@ -219,5 +219,260 @@
       (is (not (nil? micro-locations)))
       (is (= 2 (count micro-locations)))
       (is (= "Arena" (:micro_location (first micro-locations))))
-      (is (= "Fontana" (:micro_location (second micro-locations))))
+      (is (= "Franš" (:micro_location (second micro-locations))))
       )))
+
+(deftest get-ads-with-price-higher-than-test
+  (testing "should return ads with price higher than provided ordered by id desc"
+    (let [ads (dao/get-paged-real-estates
+                {:priceHigher 105}
+                0)]
+      (is (not (empty? ads)))
+      (is (not (nil? ads)))
+      (is (= 1 (count ads)))
+      (is (< 105 (:price (first ads))))
+      (is (= 2 (:id (first ads))))
+      )
+    (let [ads (dao/get-paged-real-estates
+                {:priceHigher 5}
+                0)]
+      (is (not (empty? ads)))
+      (is (not (nil? ads)))
+      (is (= 2 (count ads)))
+      (is (< 5 (:price (first ads))))
+      (is (= 2 (:id (first ads))))
+      (is (< 5 (:price (second ads))))
+      (is (= 1 (:id (second ads))))
+      )))
+
+(deftest get-ads-with-price-les-than-test
+  (testing "should return ads with price les than provided ordered by id desc"
+    (let [ads (dao/get-paged-real-estates
+                {:priceLes 105}
+                0)]
+      (is (not (empty? ads)))
+      (is (not (nil? ads)))
+      (is (= 1 (count ads)))
+      (is (> 105 (:price (first ads))))
+      (is (= 1 (:id (first ads))))
+      )
+    (let [ads (dao/get-paged-real-estates
+                {:priceLes 260}
+                0)]
+      (is (not (empty? ads)))
+      (is (not (nil? ads)))
+      (is (= 2 (count ads)))
+      (is (> 260 (:price (first ads))))
+      (is (= 2 (:id (first ads))))
+      (is (> 260 (:price (second ads))))
+      (is (= 1 (:id (second ads))))
+      )))
+
+(deftest get-ads-with-price-higher-than-test
+  (testing "should return ads with price higher than provided ordered by id desc"
+    (let [ads (dao/get-paged-real-estates
+                {:priceHigher 105}
+                0)]
+      (is (not (empty? ads)))
+      (is (not (nil? ads)))
+      (is (= 1 (count ads)))
+      (is (< 105 (:price (first ads))))
+      (is (= 2 (:id (first ads))))
+      )
+    (let [ads (dao/get-paged-real-estates
+                {:priceHigher 5}
+                0)]
+      (is (not (empty? ads)))
+      (is (not (nil? ads)))
+      (is (= 2 (count ads)))
+      (is (< 5 (:price (first ads))))
+      (is (= 2 (:id (first ads))))
+      (is (< 5 (:price (second ads))))
+      (is (= 1 (:id (second ads))))
+      )))
+
+(deftest get-ads-with-space-area-les-than-test
+  (testing "should return ads with space area les than provided ordered by id desc"
+    (let [ads (dao/get-paged-real-estates
+                {:spaceAreaLes 55}
+                0)]
+      (is (not (empty? ads)))
+      (is (not (nil? ads)))
+      (is (= 1 (count ads)))
+      (is (> 55 (:living_space_area (first ads))))
+      (is (= 1 (:id (first ads))))
+      )
+    (let [ads (dao/get-paged-real-estates
+                {:spaceAreaLes 70}
+                0)]
+      (is (not (empty? ads)))
+      (is (not (nil? ads)))
+      (is (= 2 (count ads)))
+      (is (> 70 (:living_space_area (first ads))))
+      (is (= 2 (:id (first ads))))
+      (is (> 70 (:living_space_area (second ads))))
+      (is (= 1 (:id (second ads))))
+      )))
+
+
+(deftest get-ads-with-space-area-higher-than-test
+  (testing "should return ads with space area higher than provided ordered by id desc"
+    (let [ads (dao/get-paged-real-estates
+                {:spaceAreaHigher 55}
+                0)]
+      (is (not (empty? ads)))
+      (is (not (nil? ads)))
+      (is (= 1 (count ads)))
+      (is (> 105 (:living_space_area (first ads))))
+      (is (= 2 (:id (first ads))))
+      )
+    (let [ads (dao/get-paged-real-estates
+                {:spaceAreaHigher 35}
+                0)]
+      (is (not (empty? ads)))
+      (is (not (nil? ads)))
+      (is (= 2 (count ads)))
+      (is (< 35 (:living_space_area (first ads))))
+      (is (= 2 (:id (first ads))))
+      (is (< 35 (:living_space_area (second ads))))
+      (is (= 1 (:id (second ads))))
+      )))
+
+(deftest get-ads-with-rooms-number-les-than-test
+  (testing "should return ads with rooms number les than provided ordered by id desc"
+    (let [ads (dao/get-paged-real-estates
+                {:roomsNumberLes 3.0}
+                0)]
+      (is (not (empty? ads)))
+      (is (not (nil? ads)))
+      (is (= 1 (count ads)))
+      (is (> 3.0 (:rooms_number (first ads))))
+      (is (= 2 (:id (first ads))))
+      )
+    (let [ads (dao/get-paged-real-estates
+                {:roomsNumberLes 4.5}
+                0)]
+      (is (not (empty? ads)))
+      (is (not (nil? ads)))
+      (is (= 2 (count ads)))
+      (is (> 4.5 (:rooms_number (first ads))))
+      (is (= 2 (:id (first ads))))
+      (is (> 4.5 (:rooms_number (second ads))))
+      (is (= 1 (:id (second ads))))
+      )))
+
+
+(deftest get-ads-with-rooms-number-higher-than-test
+  (testing "should return ads with rooms number higher than provided ordered by id desc"
+    (let [ads (dao/get-paged-real-estates
+                {:roomsNumberHigher 3.0}
+                0)]
+      (is (not (empty? ads)))
+      (is (not (nil? ads)))
+      (is (= 1 (count ads)))
+      (is (< 3.0 (:rooms_number (first ads))))
+      (is (= 1 (:id (first ads))))
+      )
+    (let [ads (dao/get-paged-real-estates
+                {:roomsNumberHigher 1.5}
+                0)]
+      (is (not (empty? ads)))
+      (is (not (nil? ads)))
+      (is (= 2 (count ads)))
+      (is (< 1.5 (:rooms_number (first ads))))
+      (is (= 2 (:id (first ads))))
+      (is (< 1.5 (:rooms_number (second ads))))
+      (is (= 1 (:id (second ads))))
+      )))
+
+(deftest get-ads-with-location-test
+  (testing "should return ads on provided locations ordered by id desc"
+    (let [ads (dao/get-paged-real-estates
+                {:location ["Opština Vračаr"]}
+                0)]
+      (is (not (empty? ads)))
+      (is (not (nil? ads)))
+      (is (= 1 (count ads)))
+      (is (= "Opština Vračаr" (:location (first ads))))
+      (is (= 2 (:id (first ads))))
+      )
+    (let [ads (dao/get-paged-real-estates
+                {:location ["Opština Vračаr" "Opština Novi Beograd"]}
+                0)]
+      (is (not (empty? ads)))
+      (is (not (nil? ads)))
+      (is (= 2 (count ads)))
+      (is (= "Opština Vračаr" (:location (first ads))))
+      (is (= 2 (:id (first ads))))
+      (is (= "Opština Novi Beograd" (:location (second ads))))
+      (is (= 1 (:id (second ads))))
+      )
+    (let [ads (dao/get-paged-real-estates
+                {}
+                0)]
+      (is (not (empty? ads)))
+      (is (not (nil? ads)))
+      (is (= 2 (count ads)))
+      (is (= "Opština Vračаr" (:location (first ads))))
+      (is (= 2 (:id (first ads))))
+      (is (= "Opština Novi Beograd" (:location (second ads))))
+      (is (= 1 (:id (second ads))))
+      )
+    (let [ads (dao/get-paged-real-estates
+                {:location nil}
+                0)]
+      (is (not (empty? ads)))
+      (is (not (nil? ads)))
+      (is (= 2 (count ads)))
+      (is (= "Opština Vračаr" (:location (first ads))))
+      (is (= 2 (:id (first ads))))
+      (is (= "Opština Novi Beograd" (:location (second ads))))
+      (is (= 1 (:id (second ads))))
+      )
+    ))
+
+(deftest get-ads-with-micro-location-test
+  (testing "should return ads on provided micro locations ordered by id desc"
+    (let [ads (dao/get-paged-real-estates
+                {:microLocation ["Franš"]}
+                0)]
+      (is (not (empty? ads)))
+      (is (not (nil? ads)))
+      (is (= 1 (count ads)))
+      (is (= "Franš" (:micro_location (first ads))))
+      (is (= 2 (:id (first ads))))
+      )
+    (let [ads (dao/get-paged-real-estates
+                {:microLocation ["Arena" "Franš"]}
+                0)]
+      (is (not (empty? ads)))
+      (is (not (nil? ads)))
+      (is (= 2 (count ads)))
+      (is (= "Franš" (:micro_location (first ads))))
+      (is (= 2 (:id (first ads))))
+      (is (= "Arena" (:micro_location (second ads))))
+      (is (= 1 (:id (second ads))))
+      )
+    (let [ads (dao/get-paged-real-estates
+                {}
+                0)]
+      (is (not (empty? ads)))
+      (is (not (nil? ads)))
+      (is (= 2 (count ads)))
+      (is (= "Franš" (:micro_location (first ads))))
+      (is (= 2 (:id (first ads))))
+      (is (= "Arena" (:micro_location (second ads))))
+      (is (= 1 (:id (second ads))))
+      )
+    (let [ads (dao/get-paged-real-estates
+                {:microLocation nil}
+                0)]
+      (is (not (empty? ads)))
+      (is (not (nil? ads)))
+      (is (= 2 (count ads)))
+      (is (= "Franš" (:micro_location (first ads))))
+      (is (= 2 (:id (first ads))))
+      (is (= "Arena" (:micro_location (second ads))))
+      (is (= 1 (:id (second ads))))
+      )
+    ))

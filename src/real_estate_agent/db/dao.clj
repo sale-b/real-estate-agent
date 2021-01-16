@@ -91,11 +91,20 @@
 
 (defn prepare-arguments
   [filter page-number]
-  (concat
-    (keep #(if (valid? %) % 1)
-          (flatten (vals filter)))
-    (repeat 1 page-size)
-    (repeat 1 (* page-size page-number))))
+  (let [valid-filter {:priceHigher     (:priceHigher filter)
+                      :priceLes        (:priceLes filter)
+                      :spaceAreaHigher (:spaceAreaHigher filter)
+                      :spaceAreaLes    (:spaceAreaLes filter)
+                      :roomsNumberHigher (:roomsNumberHigher filter)
+                      :roomsNumberLes    (:roomsNumberLes filter)
+                      :location        (:location filter)
+                      :microLocation   (:microLocation filter)
+                      }] (concat
+                           (if (not (nil? filter)) (keep #(if (valid? %) %)
+                                                         (flatten (vals valid-filter)))
+                                                   '())
+                           (repeat 1 page-size)
+                           (repeat 1 (* page-size page-number)))))
 
 (defn prepare-query
   [filter]
@@ -107,17 +116,34 @@
        "select rei.real_estate_id from real_estates_images where real_estate_id = re.id order by id limit 1 "
        ") "
        "where 1 = 1 "
-       (if (valid? (:priceHigher filter))
+       (if (and (not (nil? filter)) (valid? (:priceHigher filter)))
          "and price > ? "
-         "and 1 = ? ")
-       (if (valid? (:spaceArea filter))
+         "")
+       (if (and (not (nil? filter)) (valid? (:priceLes filter)))
+         "and price < ? "
+         "")
+       (if (and (not (nil? filter)) (valid? (:spaceAreaHigher filter)))
          "and living_space_area > ? "
-         "and 1 = ? ")
-       (if (> (count (:microLocation filter)) 0)
+         "")
+       (if (and (not (nil? filter)) (valid? (:spaceAreaLes filter)))
+         "and living_space_area < ? "
+         "")
+       (if (and (not (nil? filter)) (valid? (:roomsNumberHigher filter)))
+         "and rooms_number > ? "
+         "")
+       (if (and (not (nil? filter)) (valid? (:roomsNumberLes filter)))
+         "and rooms_number < ? "
+         "")
+       (if (and (not (nil? filter)) (> (count (:location filter)) 0))
+         (str "and location in ("
+              (clojure.string/join ", " (take (count (:location filter)) (repeat "?")))
+              ") ")
+         "")
+       (if (and (not (nil? filter)) (> (count (:microLocation filter)) 0))
          (str "and micro_location in ("
               (clojure.string/join ", " (take (count (:microLocation filter)) (repeat "?")))
               ") ")
-         "and 1 = ? ")
+         "")
        "order by re.id desc "
        "limit ? "                                           ;ads per page
        "offset ?"))
@@ -135,17 +161,17 @@
 (defn get-all-locations
   []
   (db/query db
-            ["select distinct \"location\" from real_estates"]))
+            ["select distinct \"location\" from real_estates order by \"location\" asc"]))
 
 (defn get-all-micro-locations
   []
   (db/query db
-            ["select distinct micro_location from real_estates"]))
+            ["select distinct micro_location from real_estates order by micro_location asc"]))
 
 (defn get-last-inserted-real-estate
   []
   (first (db/query db
-                   ["select * from real_estates ORDER BY created_on DESC LIMIT 1"])))
+                   ["select * from real_estates order by created_on desc limit 1"])))
 
 
 

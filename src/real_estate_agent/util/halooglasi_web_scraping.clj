@@ -1,7 +1,8 @@
 (ns real-estate-agent.util.halooglasi-web-scraping
   (:require [clojure.data.json :as json]
             [net.cgrand.enlive-html :as html]
-            [real-estate-agent.db.dao :as dao])
+            [real-estate-agent.db.dao :as dao]
+            [real-estate-agent.util.cast :as cast])
   (:use [clojure.string :only [index-of]]))
 
 (defn get-substring [string start end]
@@ -81,7 +82,8 @@
   {:tittle            (get-tittle page)
    :price             (get-price page)
    :type              (get-real-estate-type page)
-   :rooms_number      (get-rooms-number page)
+   :rooms_number      (let [rn (get-rooms-number page)]
+                        (if (= "5+" rn) 6.0 (cast/string-to-double rn)))
    :floor             (get-floor page)
    :description       (get-description page)
    :location          (get-location page)
