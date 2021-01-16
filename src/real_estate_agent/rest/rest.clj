@@ -29,7 +29,8 @@
            (POST "/login" [] (fn [req] (service/login (:body req))))
            (GET "/user/:id" [id] (fn [req] (service/get-user id (:headers req))))
            (GET "/ad/:id" [id] (service/get-ad-by-id id))
-           (GET "/page/:page" [page] (service/get-ads-paged page))
+           (POST "/page" [] (fn [req]( service/get-ads-paged (:body req))))
+           (GET "/get-locations" [] (service/get-all-locations))
            (route/resources "/"))
 
 (def app (wrap-json-response (wrap-json-body (cors-handler my-routes) {:keywords? true})))

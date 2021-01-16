@@ -70,17 +70,23 @@
       (response ad))))
 
 (defn get-ads-paged
-  [current-page]
-  (if (>  (cast/string-to-int current-page) 0)
-    (response (let [db-page (vec (dao/get-paged-real-estates (-  (cast/string-to-int current-page) 1)))]
-    {:ads        (vec (map #(update-in % [:description] make-short-description) db-page))
-     :pagination {:currentPage         (cast/string-to-int current-page)
-                  :totalPages (int (:total_pages (dao/get-total-pages-number)))}
-     }))
+  [request]
+  (if (> (:page request) 0)
+    (response (let [db-page (vec (dao/get-paged-real-estates (:filters request) (- (:page request) 1)))]
+                {:ads        (vec (map #(update-in % [:description] make-short-description) db-page))
+                 :pagination {:currentPage (:page request)
+                              :totalPages  (int (:total_pages (dao/get-total-pages-number)))}
+                 }))
     (bad-request "Page number must be higher than zero.")))
 
-;(defn is-geolocation-satisfied?
-;  [id]
-;  (def prepared-polygon (prepare (polygon (linear-ring [(c 20 40) (c 20 46) (c 34 56) (c 20 40)]) nil)))
-;  (contains? prepared-polygon point))
+(defn is-geolocation-satisfied?
+  [pol point]
+  (let [prepared-polygon (prep/prepare (geom/polygon (geom/linear-ring (into [] (map #(into () %) pol))) nil))]
+    (relation/contains? prepared-polygon point)))
+
+(defn get-all-locations
+  []
+  (response (assoc (assoc {}
+                     :locations (into [] (map #(:location %) (dao/get-all-locations))))
+              :microLocations (into [] (map #(:micro_location %) (dao/get-all-micro-locations))))))
 

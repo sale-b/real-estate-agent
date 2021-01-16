@@ -3,6 +3,8 @@
            :description       "Stan na dobroj lokaciji. Po strukturi troiposoban, dvostrano orjentisan, dva mokra cvora."
            :living_space_area 50.0
            :geolocation       "20.448792,44.8148"
+           :location          "Opština Novi Beograd"
+           :micro_location    "Arena"
            :furniture         nil
            :rooms_number      3.5
            :tittle            "Novi Beograd Lux"
@@ -15,6 +17,8 @@
            :description       "Stan na dobroj lokaciji. Po strukturi dvoiposoban, dvostrano orjentisan..."
            :living_space_area 60.0
            :geolocation       "44.123123,20.123456"
+           :location          "Opština Novi Beograd"
+           :micro_location    "Fontana"
            :furniture         nil
            :rooms_number      2.5
            :tittle            "Vracar povoljno"

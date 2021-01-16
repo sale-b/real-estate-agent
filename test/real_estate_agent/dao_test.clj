@@ -89,7 +89,7 @@
 (deftest insert-session-test
   (testing "should insert a new session into db, retrieve that session and update last_used timestamp"
     (let [session {:user_id 2,
-                   :token "bdfff95c-3803-4874-b70c-2f2adc69a2ab"}
+                   :token   "bdfff95c-3803-4874-b70c-2f2adc69a2ab"}
           ]
       (let [db-response (dao/insert-session session)]
         (is (not (nil? db-response)))
@@ -119,6 +119,8 @@
                                                "Uknjizen. Za preporuku. Agancijska provizija 2%. Za sve dodatne informacije, molimo da nas kontaktirate.,")
                        :living_space_area 130.0
                        :geolocation       "44.809900,20.421300"
+                       :location          "Opština Novi Beograd"
+                       :micro_location    "Arena"
                        :furniture         nil
                        :advertiser        "Agencija"
                        :rooms_number      3.5
@@ -149,6 +151,8 @@
                       "Uknjizen. Za preporuku. Agancijska provizija 2%. Za sve dodatne informacije, molimo da nas kontaktirate.,") (:description db-real-estate)))
           (is (== 130.0 (:living_space_area db-real-estate)))
           (is (= "44.809900,20.421300" (:geolocation db-real-estate)))
+          (is (= "Opština Novi Beograd" (:location db-real-estate)))
+          (is (= "Arena" (:micro_location db-real-estate)))
           (is (= nil (:furniture db-real-estate)))
           ;its not stored in db since we are collecting only owners ads
           (is (= nil (:advertiser db-real-estate)))
@@ -182,6 +186,8 @@
       (is (= "Stan na dobroj lokaciji. Po strukturi dvoiposoban, dvostrano orjentisan..." (:description db-real-estate-last)))
       (is (== 60.0 (:living_space_area db-real-estate-last)))
       (is (= "44.123123,20.123456" (:geolocation db-real-estate-last)))
+      (is (= "Opština Novi Beograd" (:location db-real-estate-last)))
+      (is (= "Fontana" (:micro_location db-real-estate-last)))
       (is (= nil (:furniture db-real-estate-last)))
       ;its not stored in db since we are collecting only owners ads
       (is (= nil (:advertiser db-real-estate-last)))
@@ -190,9 +196,28 @@
       (is (= "Stan" (:type db-real-estate-last)))
       (is (= nil (:pictures db-real-estate-last)))
       (is (== 250.0 (:price db-real-estate-last)))
-      (is (= "062/222-22-22" (:phone  db-real-estate-last)))
+      (is (= "062/222-22-22" (:phone db-real-estate-last)))
       (is (= "VPR" (:floor db-real-estate-last)))
       (is (= "CG" (:heating_type db-real-estate-last)))
       (is (not (nil? (:created_on db-real-estate-last))))
       (is (not (nil? (:modified_on db-real-estate-last))))
+      )))
+
+(deftest get-all-locations-test
+  (testing "should return all ads unique locations"
+    (let [locations (dao/get-all-locations)]
+      (is (not (empty? locations)))
+      (is (not (nil? locations)))
+      (is (= "Opština Novi Beograd" (:location (first locations))))
+      (is (= 1 (count locations)))
+      )))
+
+(deftest get-all-micro-locations-test
+  (testing "should return all ads unique micro locations"
+    (let [micro-locations (dao/get-all-micro-locations)]
+      (is (not (empty? micro-locations)))
+      (is (not (nil? micro-locations)))
+      (is (= 2 (count micro-locations)))
+      (is (= "Arena" (:micro_location (first micro-locations))))
+      (is (= "Fontana" (:micro_location (second micro-locations))))
       )))

@@ -21,6 +21,12 @@
 
 (def page-size 10)
 
+(defn valid? [v] (if (not (nil? v))
+                   (if (number? v)
+                     (> v 0)
+                     (not (empty? v)))
+                   false))
+
 (defn insert-user
   [user]
   (first (db/insert! db :users (assoc user :password (password/encrypt (:password user))))))
@@ -82,26 +88,66 @@
     :pictures (into [] (map :url (db/query db
                                            ["select * from real_estates_images where real_estate_id = ?" id])))))
 
+
+(defn prepare-arguments
+  [filter page-number]
+  (concat
+    (keep #(if (valid? %) % 1)
+          (flatten (vals filter)))
+    (repeat 1 page-size)
+    (repeat 1 (* page-size page-number))))
+
+(defn prepare-query
+  [filter]
+  (str "select  distinct on (id) re.id, re.tittle, re.phone, re.location, re.micro_location, re.price, re.\"type\", re.rooms_number, re.floor, re.description, re.living_space_area, re.furniture, re.heating_type, re.created_on, rei.url as img_url "
+       "from real_estates re "
+       "left join real_estates_images  rei "
+       "on   re.id = "
+       "( "
+       "select rei.real_estate_id from real_estates_images where real_estate_id = re.id order by id limit 1 "
+       ") "
+       "where 1 = 1 "
+       (if (valid? (:priceHigher filter))
+         "and price > ? "
+         "and 1 = ? ")
+       (if (valid? (:spaceArea filter))
+         "and living_space_area > ? "
+         "and 1 = ? ")
+       (if (> (count (:microLocation filter)) 0)
+         (str "and micro_location in ("
+              (clojure.string/join ", " (take (count (:microLocation filter)) (repeat "?")))
+              ") ")
+         "and 1 = ? ")
+       "order by re.id desc "
+       "limit ? "                                           ;ads per page
+       "offset ?"))
+
+
 (defn get-paged-real-estates
-  [page-number]
+  [filter page-number]
   (db/query db
-            [(str "select  distinct on (id) re.id, re.tittle, re.phone, re.price, re.\"type\", re.rooms_number, re.floor, re.description, re.living_space_area, re.furniture, re.heating_type, re.created_on, rei.url as img_url "
-                  "from real_estates re "
-                  "left join real_estates_images  rei "
-                  "on   re.id = "
-                  "( "
-                  "select rei.real_estate_id from real_estates_images where real_estate_id = re.id order by id limit 1 "
-                  ") "
-                  "order by re.id desc "
-                  "limit ? "                                ;ads per page
-                  "offset ?") page-size (* page-size page-number)]))
+            (into [] (concat [(prepare-query filter)] (prepare-arguments filter page-number)))))
 
 (defn get-total-pages-number
   []
   (first (db/query db ["select greatest(ceiling(count(id) / ?), 1) as total_pages from real_estates" page-size])))
 
+(defn get-all-locations
+  []
+  (db/query db
+            ["select distinct \"location\" from real_estates"]))
+
+(defn get-all-micro-locations
+  []
+  (db/query db
+            ["select distinct micro_location from real_estates"]))
+
 (defn get-last-inserted-real-estate
   []
   (first (db/query db
                    ["select * from real_estates ORDER BY created_on DESC LIMIT 1"])))
+
+
+
+
 

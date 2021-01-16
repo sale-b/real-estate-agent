@@ -31,6 +31,18 @@
       (is (= 260000.0 price))
       )))
 
+(deftest get-location-test
+  (testing "should return ad location from a webpage"
+    (let [location (get-location (fetch-page "resources\\test_files\\sample-ad.html"))]
+      (is (= "Opština Novi Beograd" location))
+      )))
+
+(deftest get-micro-location-test
+  (testing "should return ad micro location from a webpage"
+    (let [micro-location (get-micro-location (fetch-page "resources\\test_files\\sample-ad.html"))]
+      (is (= "Arena" micro-location))
+      )))
+
 (deftest get-living-space-area-test
   (testing "should return ad living-space-area from a webpage"
     (let [living-space-area (get-living-space-area (fetch-page "resources\\test_files\\sample-ad.html"))]
@@ -110,6 +122,8 @@
       (is (= "Novi Beograd-Arena-Blok 25-130m2-Lux-Uknjižen ID#1" (:tittle ad)))
       (is (= "44.809900,20.421300" (:geolocation ad)))
       (is (= 260000.0 (:price ad)))
+      (is (= "Opština Novi Beograd" (:location ad)))
+      (is (= "Arena" (:micro-location ad)))
       (is (= 130.0 (:living_space_area ad)))
       (is (= "Agencija" (:advertiser ad)))
       (is (= "Stan" (:type ad)))

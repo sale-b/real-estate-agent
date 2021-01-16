@@ -37,6 +37,12 @@
 (defn get-price [page]
   (:cena_d (:OtherFields (ad-content page))))
 
+(defn get-location [page]
+  (:lokacija_s (:OtherFields (ad-content page))))
+
+(defn get-micro-location [page]
+  (:mikrolokacija_s (:OtherFields (ad-content page))))
+
 (defn get-real-estate-type [page]
   (:tip_nekretnine_s (:OtherFields (ad-content page))))
 
@@ -78,6 +84,8 @@
    :rooms_number      (get-rooms-number page)
    :floor             (get-floor page)
    :description       (get-description page)
+   :location          (get-location page)
+   :micro-location    (get-micro-location page)
    :geolocation       (get-geolocation page)
    :living_space_area (get-living-space-area page)
    :furniture         (get-furniture page)

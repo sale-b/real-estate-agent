@@ -7,6 +7,8 @@ CREATE TABLE real_estates (
   rooms_number varchar(10),
   floor varchar(10),
   description varchar not null,
+  location varchar(100) not null,
+  micro_location varchar(100) not null,
   geolocation varchar(100) not null,
   url varchar(255) not null,
   living_space_area numeric not null,
