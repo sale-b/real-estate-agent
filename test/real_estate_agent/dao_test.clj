@@ -126,6 +126,7 @@
                        :rooms_number      3.5
                        :tittle            "Novi Beograd-Arena-Blok 25-130m2-Lux-Uknjižen ID#1"
                        :type              "Stan"
+                       :ad_type           "Prodaja"
                        :pictures          ["/slike/oglasi/Thumbs/201227/l/novi-beograd-arena-blok-25-130m2-lux-uknjizen-5425636159803-71793910130.jpg"
                                            "/slike/oglasi/Thumbs/201227/l/novi-beograd-arena-blok-25-130m2-lux-uknjizen-5425636159803-71793910131.jpg"
                                            "/slike/oglasi/Thumbs/201227/l/novi-beograd-arena-blok-25-130m2-lux-uknjizen-5425636159803-71793910132.jpg"
@@ -139,7 +140,8 @@
                        :price             260000.0
                        :phone             "061/33-33-33"
                        :floor             "7"
-                       :heating_type      "EG"}
+                       :heating_type      "EG"
+                       :has_pictures true}
           ]
       (let [db-response (dao/insert-real-estate real-estate)]
         (is (not (nil? db-response)))
@@ -159,6 +161,7 @@
           (is (== 3.5 (:rooms_number db-real-estate)))
           (is (= "Novi Beograd-Arena-Blok 25-130m2-Lux-Uknjižen ID#1" (:tittle db-real-estate)))
           (is (= "Stan" (:type db-real-estate)))
+          (is (= "Prodaja" (:ad_type db-real-estate)))
           (is (= ["https://img.halooglasi.com/slike/oglasi/Thumbs/201227/l/novi-beograd-arena-blok-25-130m2-lux-uknjizen-5425636159803-71793910130.jpg"
                   "https://img.halooglasi.com/slike/oglasi/Thumbs/201227/l/novi-beograd-arena-blok-25-130m2-lux-uknjizen-5425636159803-71793910131.jpg"
                   "https://img.halooglasi.com/slike/oglasi/Thumbs/201227/l/novi-beograd-arena-blok-25-130m2-lux-uknjizen-5425636159803-71793910132.jpg"
@@ -175,6 +178,7 @@
           (is (= "EG" (:heating_type db-real-estate)))
           (is (not (nil? (:created_on db-real-estate))))
           (is (not (nil? (:modified_on db-real-estate))))
+          (is (= true (:has_pictures db-real-estate)))
           )
         ))))
 
@@ -188,12 +192,12 @@
       (is (= "44.123123,20.123456" (:geolocation db-real-estate-last)))
       (is (= "Opština Vračаr" (:location db-real-estate-last)))
       (is (= "Franš" (:micro_location db-real-estate-last)))
-      (is (= nil (:furniture db-real-estate-last)))
+      (is (= "namešteno" (:furniture db-real-estate-last)))
       ;its not stored in db since we are collecting only owners ads
       (is (= nil (:advertiser db-real-estate-last)))
       (is (== 2.5 (:rooms_number db-real-estate-last)))
       (is (= "Vracar povoljno" (:tittle db-real-estate-last)))
-      (is (= "Stan" (:type db-real-estate-last)))
+      (is (= "Kuća" (:type db-real-estate-last)))
       (is (= nil (:pictures db-real-estate-last)))
       (is (== 250.0 (:price db-real-estate-last)))
       (is (= "062/222-22-22" (:phone db-real-estate-last)))
@@ -221,6 +225,56 @@
       (is (= "Arena" (:micro_location (first micro-locations))))
       (is (= "Franš" (:micro_location (second micro-locations))))
       )))
+
+(deftest get-all-real-estate-types-test
+  (testing "should return all ads unique real estate types"
+    (let [real-estate-types (dao/get-all-real-estate-types)]
+      (is (not (empty? real-estate-types)))
+      (is (not (nil? real-estate-types)))
+      (is (= 2 (count real-estate-types)))
+      (is (= "Kuća" (:type (first real-estate-types))))
+      (is (= "Stan" (:type (second real-estate-types))))
+      )))
+
+(deftest get-all-furniture-types-test
+  (testing "should return all ads unique furniture types types"
+    (let [furniture-types (dao/get-all-furniture-types)]
+      (is (not (empty? furniture-types)))
+      (is (not (nil? furniture-types)))
+      (is (= 1 (count furniture-types)))
+      (is (= "namešteno" (:furniture (first furniture-types))))
+      )))
+
+(deftest get-all-ad-types-test
+  (testing "should return all ads unique ad types types"
+    (let [ad-types (dao/get-all-ad-types)]
+      (is (not (empty? ad-types)))
+      (is (not (nil? ad-types)))
+      (is (= 2 (count ad-types)))
+      (is (= "Izdavanje" (:ad_type (first ad-types))))
+      (is (= "Prodaja" (:ad_type (second ad-types))))
+      )))
+
+(deftest get-all-heating-types-test
+  (testing "should return all ads unique heating types types"
+    (let [heating-types (dao/get-all-heating-types)]
+      (is (not (empty? heating-types)))
+      (is (not (nil? heating-types)))
+      (is (= 2 (count heating-types)))
+      (is (= "CG" (:heating_type (first heating-types))))
+      (is (= "EG" (:heating_type (second heating-types))))
+      )))
+
+(deftest get-all-floors-test
+  (testing "should return all ads unique floors types"
+    (let [floors (dao/get-all-floors)]
+      (is (not (empty? floors)))
+      (is (not (nil? floors)))
+      (is (= 2 (count floors)))
+      (is (= "7" (:floor (first floors))))
+      (is (= "VPR" (:floor (second floors))))
+      )))
+
 
 (deftest get-ads-with-price-higher-than-test
   (testing "should return ads with price higher than provided ordered by id desc"
@@ -476,3 +530,244 @@
       (is (= 1 (:id (second ads))))
       )
     ))
+
+(deftest get-ads-with-type-test
+  (testing "should return ads on provided real estate type ordered by id desc"
+    (let [ads (dao/get-paged-real-estates
+                {:type ["Kuća"]}
+                0)]
+      (is (not (empty? ads)))
+      (is (not (nil? ads)))
+      (is (= 1 (count ads)))
+      (is (= "Kuća" (:type (first ads))))
+      (is (= 2 (:id (first ads))))
+      )
+    (let [ads (dao/get-paged-real-estates
+                {:type ["Stan" "Kuća"]}
+                0)]
+      (is (not (empty? ads)))
+      (is (not (nil? ads)))
+      (is (= 2 (count ads)))
+      (is (= "Kuća" (:type (first ads))))
+      (is (= 2 (:id (first ads))))
+      (is (= "Stan" (:type (second ads))))
+      (is (= 1 (:id (second ads))))
+      )
+    (let [ads (dao/get-paged-real-estates
+                {}
+                0)]
+      (is (not (empty? ads)))
+      (is (not (nil? ads)))
+      (is (= 2 (count ads)))
+      (is (= "Kuća" (:type (first ads))))
+      (is (= 2 (:id (first ads))))
+      (is (= "Stan" (:type (second ads))))
+      (is (= 1 (:id (second ads))))
+      )
+    (let [ads (dao/get-paged-real-estates
+                {:type nil}
+                0)]
+      (is (not (empty? ads)))
+      (is (not (nil? ads)))
+      (is (= 2 (count ads)))
+      (is (= "Kuća" (:type (first ads))))
+      (is (= 2 (:id (first ads))))
+      (is (= "Stan" (:type (second ads))))
+      (is (= 1 (:id (second ads))))
+      )
+    ))
+
+(deftest get-ads-with-ad-type-test
+  (testing "should return ads on provided real estate ad type ordered by id desc"
+    (let [ads (dao/get-paged-real-estates
+                {:adType ["Izdavanje"]}
+                0)]
+      (is (not (empty? ads)))
+      (is (not (nil? ads)))
+      (is (= 1 (count ads)))
+      (is (= "Izdavanje" (:ad_type (first ads))))
+      (is (= 2 (:id (first ads))))
+      )
+    (let [ads (dao/get-paged-real-estates
+                {:adType ["Izdavanje" "Prodaja"]}
+                0)]
+      (is (not (empty? ads)))
+      (is (not (nil? ads)))
+      (is (= 2 (count ads)))
+      (is (= "Izdavanje" (:ad_type (first ads))))
+      (is (= 2 (:id (first ads))))
+      (is (= "Prodaja" (:ad_type (second ads))))
+      (is (= 1 (:id (second ads))))
+      )
+    (let [ads (dao/get-paged-real-estates
+                {}
+                0)]
+      (is (not (empty? ads)))
+      (is (not (nil? ads)))
+      (is (= 2 (count ads)))
+      (is (= "Izdavanje" (:ad_type (first ads))))
+      (is (= 2 (:id (first ads))))
+      (is (= "Prodaja" (:ad_type (second ads))))
+      (is (= 1 (:id (second ads))))
+      )
+    (let [ads (dao/get-paged-real-estates
+                {:adType nil}
+                0)]
+      (is (not (empty? ads)))
+      (is (not (nil? ads)))
+      (is (= 2 (count ads)))
+      (is (= "Izdavanje" (:ad_type (first ads))))
+      (is (= 2 (:id (first ads))))
+      (is (= "Prodaja" (:ad_type (second ads))))
+      (is (= 1 (:id (second ads))))
+      )
+    ))
+
+(deftest get-ads-with-heating-type-test
+  (testing "should return ads on provided heating type ordered by id desc"
+    (let [ads (dao/get-paged-real-estates
+                {:heatingType ["CG"]}
+                0)]
+      (is (not (empty? ads)))
+      (is (not (nil? ads)))
+      (is (= 1 (count ads)))
+      (is (= "CG" (:heating_type (first ads))))
+      (is (= 2 (:id (first ads))))
+      )
+    (let [ads (dao/get-paged-real-estates
+                {:heatingType ["CG" "EG"]}
+                0)]
+      (is (not (empty? ads)))
+      (is (not (nil? ads)))
+      (is (= 2 (count ads)))
+      (is (= "CG" (:heating_type (first ads))))
+      (is (= 2 (:id (first ads))))
+      (is (= "EG" (:heating_type (second ads))))
+      (is (= 1 (:id (second ads))))
+      )
+    (let [ads (dao/get-paged-real-estates
+                {}
+                0)]
+      (is (not (empty? ads)))
+      (is (not (nil? ads)))
+      (is (= 2 (count ads)))
+      (is (= "CG" (:heating_type (first ads))))
+      (is (= 2 (:id (first ads))))
+      (is (= "EG" (:heating_type (second ads))))
+      (is (= 1 (:id (second ads))))
+      )
+    (let [ads (dao/get-paged-real-estates
+                {:heatingType nil}
+                0)]
+      (is (not (empty? ads)))
+      (is (not (nil? ads)))
+      (is (= 2 (count ads)))
+      (is (= "CG" (:heating_type (first ads))))
+      (is (= 2 (:id (first ads))))
+      (is (= "EG" (:heating_type (second ads))))
+      (is (= 1 (:id (second ads))))
+      )
+    ))
+
+(deftest get-ads-with-floor-test
+  (testing "should return ads on provided floor ordered by id desc"
+    (let [ads (dao/get-paged-real-estates
+                {:floor ["VPR"]}
+                0)]
+      (is (not (empty? ads)))
+      (is (not (nil? ads)))
+      (is (= 1 (count ads)))
+      (is (= "VPR" (:floor (first ads))))
+      (is (= 2 (:id (first ads))))
+      )
+    (let [ads (dao/get-paged-real-estates
+                {:floor ["VPR" "7"]}
+                0)]
+      (is (not (empty? ads)))
+      (is (not (nil? ads)))
+      (is (= 2 (count ads)))
+      (is (= "VPR" (:floor (first ads))))
+      (is (= 2 (:id (first ads))))
+      (is (= "7" (:floor (second ads))))
+      (is (= 1 (:id (second ads))))
+      )
+    (let [ads (dao/get-paged-real-estates
+                {}
+                0)]
+      (is (not (empty? ads)))
+      (is (not (nil? ads)))
+      (is (= 2 (count ads)))
+      (is (= "VPR" (:floor (first ads))))
+      (is (= 2 (:id (first ads))))
+      (is (= "7" (:floor (second ads))))
+      (is (= 1 (:id (second ads))))
+      )
+    (let [ads (dao/get-paged-real-estates
+                {:floor nil}
+                0)]
+      (is (not (empty? ads)))
+      (is (not (nil? ads)))
+      (is (= 2 (count ads)))
+      (is (= "VPR" (:floor (first ads))))
+      (is (= 2 (:id (first ads))))
+      (is (= "7" (:floor (second ads))))
+      (is (= 1 (:id (second ads))))
+      )
+    ))
+
+(deftest get-ads-with-pictures-test
+  (testing "should return ads with pictures ordered by id desc"
+    (let [ads (dao/get-paged-real-estates
+                {:hasPictures true}
+                0)]
+      (is (not (empty? ads)))
+      (is (not (nil? ads)))
+      (is (= 1 (count ads)))
+      (is (= 1 (:id (first ads))))
+      )
+    ))
+
+(deftest get-ads-with-furniture-test
+  (testing "should return ads on provided furniture type ordered by id desc"
+    (let [ads (dao/get-paged-real-estates
+                {:furniture ["namešteno"]}
+                0)]
+      (is (not (empty? ads)))
+      (is (not (nil? ads)))
+      (is (= 1 (count ads)))
+      (is (= "namešteno" (:furniture (first ads))))
+      (is (= 2 (:id (first ads))))
+      )
+    (let [ads (dao/get-paged-real-estates
+                {:furniture ["namešteno" nil]}
+                0)]
+      (is (not (empty? ads)))
+      (is (not (nil? ads)))
+      (is (= 1 (count ads)))
+      (is (= "namešteno" (:furniture (first ads))))
+      (is (= 2 (:id (first ads))))
+      )
+    (let [ads (dao/get-paged-real-estates
+                {}
+                0)]
+      (is (not (empty? ads)))
+      (is (not (nil? ads)))
+      (is (= 2 (count ads)))
+      (is (= "namešteno" (:furniture (first ads))))
+      (is (= 2 (:id (first ads))))
+      (is (nil? (:furniture (second ads))))
+      (is (= 1 (:id (second ads))))
+      )
+    (let [ads (dao/get-paged-real-estates
+                {:microLocation nil}
+                0)]
+      (is (not (empty? ads)))
+      (is (not (nil? ads)))
+      (is (= 2 (count ads)))
+      (is (= "namešteno" (:furniture (first ads))))
+      (is (= 2 (:id (first ads))))
+      (is (nil? (:furniture (second ads))))
+      (is (= 1 (:id (second ads))))
+      )
+    ))
+

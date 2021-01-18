@@ -9,24 +9,28 @@
            :rooms_number      3.5
            :tittle            "Novi Beograd Lux"
            :type              "Stan"
+           :ad_type           "Prodaja"
            :price             100.0
            :phone             "061/11-1111"
            :floor             "7"
-           :heating_type      "EG"}
+           :heating_type      "EG"
+           :has_pictures      true}
           {:url               "www.last.com"
            :description       "Stan na dobroj lokaciji. Po strukturi dvoiposoban, dvostrano orjentisan..."
            :living_space_area 60.0
            :geolocation       "44.123123,20.123456"
            :location          "Opština Vračаr"
            :micro_location    "Franš"
-           :furniture         nil
+           :furniture         "namešteno"
            :rooms_number      2.5
            :tittle            "Vracar povoljno"
-           :type              "Stan"
+           :type              "Kuća"
+           :ad_type           "Izdavanje"
            :price             250.0
            :phone             "062/222-22-22"
            :floor             "VPR"
-           :heating_type      "CG"}]}
+           :heating_type      "CG"
+           :has_pictures      false}]}
 
  {:table :real_estates_images
   :data  [{:url            "https://img.halooglasi.com/slike/oglasi/Thumbs/200504/l/lux-popuno-opremljen-dupleks-5425635419923-71791237852.jpg"

@@ -91,24 +91,29 @@
 
 (defn prepare-arguments
   [filter page-number]
-  (let [valid-filter {:priceHigher     (:priceHigher filter)
-                      :priceLes        (:priceLes filter)
-                      :spaceAreaHigher (:spaceAreaHigher filter)
-                      :spaceAreaLes    (:spaceAreaLes filter)
-                      :roomsNumberHigher (:roomsNumberHigher filter)
-                      :roomsNumberLes    (:roomsNumberLes filter)
-                      :location        (:location filter)
-                      :microLocation   (:microLocation filter)
-                      }] (concat
+  (let [valid-filter [(:priceHigher filter)
+                      (:priceLes filter)
+                      (:spaceAreaHigher filter)
+                      (:spaceAreaLes filter)
+                      (:roomsNumberHigher filter)
+                      (:roomsNumberLes filter)
+                      (:type filter)
+                      (:adType filter)
+                      (:heatingType filter)
+                      (:floor filter)
+                      (:furniture filter)
+                      (:location filter)
+                      (:microLocation filter)
+                      ]] (concat
                            (if (not (nil? filter)) (keep #(if (valid? %) %)
-                                                         (flatten (vals valid-filter)))
+                                                         (flatten valid-filter))
                                                    '())
                            (repeat 1 page-size)
                            (repeat 1 (* page-size page-number)))))
 
 (defn prepare-query
   [filter]
-  (str "select  distinct on (id) re.id, re.tittle, re.phone, re.location, re.micro_location, re.price, re.\"type\", re.rooms_number, re.floor, re.description, re.living_space_area, re.furniture, re.heating_type, re.created_on, rei.url as img_url "
+  (str "select  distinct on (id) re.id, re.tittle, re.phone, re.location, re.micro_location, re.price, re.\"type\", re.ad_type, re.rooms_number, re.floor, re.description, re.living_space_area, re.furniture, re.heating_type, re.created_on, rei.url as img_url "
        "from real_estates re "
        "left join real_estates_images  rei "
        "on   re.id = "
@@ -117,32 +122,60 @@
        ") "
        "where 1 = 1 "
        (if (and (not (nil? filter)) (valid? (:priceHigher filter)))
-         "and price > ? "
+         "and price >= ? "
          "")
        (if (and (not (nil? filter)) (valid? (:priceLes filter)))
-         "and price < ? "
+         "and price <= ? "
          "")
        (if (and (not (nil? filter)) (valid? (:spaceAreaHigher filter)))
-         "and living_space_area > ? "
+         "and living_space_area >= ? "
          "")
        (if (and (not (nil? filter)) (valid? (:spaceAreaLes filter)))
-         "and living_space_area < ? "
+         "and living_space_area <= ? "
          "")
        (if (and (not (nil? filter)) (valid? (:roomsNumberHigher filter)))
-         "and rooms_number > ? "
+         "and rooms_number >= ? "
          "")
        (if (and (not (nil? filter)) (valid? (:roomsNumberLes filter)))
-         "and rooms_number < ? "
+         "and rooms_number <= ? "
          "")
-       (if (and (not (nil? filter)) (> (count (:location filter)) 0))
+       (if (and (not (nil? filter)) (> (count (remove nil? (:type filter))) 0))
+         (str "and type in ("
+              (clojure.string/join ", " (take (count (remove nil? (:type filter))) (repeat "?")))
+              ") ")
+         "")
+       (if (and (not (nil? filter)) (> (count (remove nil? (:adType filter))) 0))
+         (str "and ad_type in ("
+              (clojure.string/join ", " (take (count (remove nil? (:adType filter))) (repeat "?")))
+              ") ")
+         "")
+       (if (and (not (nil? filter)) (> (count (remove nil? (:heatingType filter))) 0))
+         (str "and heating_type in ("
+              (clojure.string/join ", " (take (count (remove nil? (:heatingType filter))) (repeat "?")))
+              ") ")
+         "")
+       (if (and (not (nil? filter)) (> (count (remove nil? (:floor filter))) 0))
+         (str "and floor in ("
+              (clojure.string/join ", " (take (count (remove nil? (:floor filter))) (repeat "?")))
+              ") ")
+         "")
+       (if (and (not (nil? filter)) (> (count (remove nil? (:furniture filter))) 0))
+         (str "and furniture in ("
+              (clojure.string/join ", " (take (count (remove nil? (:furniture filter))) (repeat "?")))
+              ") ")
+         "")
+       (if (and (not (nil? filter)) (> (count (remove nil? (:location filter))) 0))
          (str "and location in ("
-              (clojure.string/join ", " (take (count (:location filter)) (repeat "?")))
+              (clojure.string/join ", " (take (count (remove nil? (:location filter))) (repeat "?")))
               ") ")
          "")
-       (if (and (not (nil? filter)) (> (count (:microLocation filter)) 0))
+       (if (and (not (nil? filter)) (> (count (remove nil? (:microLocation filter))) 0))
          (str "and micro_location in ("
-              (clojure.string/join ", " (take (count (:microLocation filter)) (repeat "?")))
+              (clojure.string/join ", " (take (count (remove nil? (:microLocation filter))) (repeat "?")))
               ") ")
+         "")
+       (if (and (not (nil? filter)) (:hasPictures filter))
+         "and has_pictures = true "
          "")
        "order by re.id desc "
        "limit ? "                                           ;ads per page
@@ -168,11 +201,35 @@
   (db/query db
             ["select distinct micro_location from real_estates order by micro_location asc"]))
 
+(defn get-all-real-estate-types
+  []
+  (db/query db
+            ["select distinct type from real_estates order by type asc"]))
+
+(defn get-all-furniture-types
+  []
+  (db/query db
+            ["select distinct furniture from real_estates where furniture is not null order by furniture asc"]))
+
+(defn get-all-ad-types
+  []
+  (db/query db
+            ["select distinct ad_type from real_estates order by ad_type asc"]))
+
+(defn get-all-heating-types
+  []
+  (db/query db
+            ["select distinct heating_type from real_estates where heating_type is not null order by heating_type asc"]))
+
+(defn get-all-floors
+  []
+  (db/query db
+            ["select distinct floor from real_estates where floor is not null order by floor asc"]))
+
 (defn get-last-inserted-real-estate
   []
   (first (db/query db
                    ["select * from real_estates order by created_on desc limit 1"])))
-
 
 
 

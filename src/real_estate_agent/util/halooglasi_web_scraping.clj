@@ -44,6 +44,9 @@
 (defn get-micro-location [page]
   (:mikrolokacija_s (:OtherFields (ad-content page))))
 
+(defn get-ad-type [page]
+  (get (:CategoryNames (ad-content page)) 2))
+
 (defn get-real-estate-type [page]
   (:tip_nekretnine_s (:OtherFields (ad-content page))))
 
@@ -82,6 +85,7 @@
   {:tittle            (get-tittle page)
    :price             (get-price page)
    :type              (get-real-estate-type page)
+   :ad_type           (get-ad-type page)
    :rooms_number      (let [rn (get-rooms-number page)]
                         (if (= "5+" rn) 6.0 (cast/string-to-double rn)))
    :floor             (get-floor page)
@@ -93,6 +97,7 @@
    :furniture         (get-furniture page)
    :heating_type      (get-heating page)
    :pictures          (get-pictures page)
+   :has_pictures      (> (count (get-pictures page)) 0)
    :advertiser        (get-advertiser page)
    :phone             (get-phone page)
    })
@@ -117,7 +122,6 @@
   (loop [page-number 1]
     (when (<= page-number (get-ads-pages-number (html-page url)))
       (doseq [current-url (get-ads-url-list (html-page (str url "&page=" page-number)))]
-        ;(println current-url)
         (if (= current-url last-inserted-url) (throw (new RuntimeException "Reached last inserted url")))
         (try
           (dao/insert-real-estate

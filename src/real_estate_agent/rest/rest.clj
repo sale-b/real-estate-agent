@@ -30,7 +30,7 @@
            (GET "/user/:id" [id] (fn [req] (service/get-user id (:headers req))))
            (GET "/ad/:id" [id] (service/get-ad-by-id id))
            (POST "/page" [] (fn [req]( service/get-ads-paged (:body req))))
-           (GET "/get-locations" [] (service/get-all-locations))
+           (GET "/get-form-props" [] (service/get-all-form-data))
            (route/resources "/"))
 
 (def app (wrap-json-response (wrap-json-body (cors-handler my-routes) {:keywords? true})))

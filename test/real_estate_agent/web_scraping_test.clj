@@ -43,6 +43,12 @@
       (is (= "Arena" micro-location))
       )))
 
+(deftest get-ad-type-test
+  (testing "should return ad type from a webpage"
+    (let [ad-type (get-ad-type (fetch-page "resources\\test_files\\sample-ad.html"))]
+      (is (= "Prodaja" ad-type))
+      )))
+
 (deftest get-living-space-area-test
   (testing "should return ad living-space-area from a webpage"
     (let [living-space-area (get-living-space-area (fetch-page "resources\\test_files\\sample-ad.html"))]
@@ -127,11 +133,13 @@
       (is (= 130.0 (:living_space_area ad)))
       (is (= "Agencija" (:advertiser ad)))
       (is (= "Stan" (:type ad)))
+      (is (= "Prodaja" (:ad_type ad)))
       (is (= 3.5 (:rooms_number ad)))
       (is (= "7" (:floor ad)))
       (is (nil? (:furniture ad)))
       (is (= "EG" (:heating_type ad)))
       (is (= "065/662-3984" (:phone ad)))
+      (is (= true (:has_pictures ad)))
       )))
 
 (deftest read-ads-list-test

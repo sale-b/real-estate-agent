@@ -84,9 +84,14 @@
   (let [prepared-polygon (prep/prepare (geom/polygon (geom/linear-ring (into [] (map #(into () %) pol))) nil))]
     (relation/contains? prepared-polygon point)))
 
-(defn get-all-locations
+(defn get-all-form-data
   []
-  (response (assoc (assoc {}
-                     :locations (into [] (map #(:location %) (dao/get-all-locations))))
-              :microLocations (into [] (map #(:micro_location %) (dao/get-all-micro-locations))))))
+  (response {:locations       (into [] (map #(:location %) (dao/get-all-locations)))
+             :microLocations  (into [] (map #(:micro_location %) (dao/get-all-micro-locations)))
+             :adTypes         (into [] (map #(:ad_type %) (dao/get-all-ad-types)))
+             :realEstateTypes (into [] (map #(:type %) (dao/get-all-real-estate-types)))
+             :heatingTypes    (into [] (map #(:heating_type %) (dao/get-all-heating-types)))
+             :floors          (into [] (map #(:floor %) (dao/get-all-floors)))
+             :furnitureTypes  (into [] (map #(:furniture %) (dao/get-all-furniture-types)))
+             }))
 

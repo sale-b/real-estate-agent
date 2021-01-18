@@ -3,6 +3,7 @@ CREATE TABLE real_estates (
   tittle varchar(100) not null,
   phone varchar (20) not null,
   price numeric not null,
+  ad_type varchar(10) not null,
   type varchar(10) not null,
   rooms_number numeric not null,
   floor varchar(10),
@@ -14,6 +15,7 @@ CREATE TABLE real_estates (
   living_space_area numeric not null,
   furniture varchar(30),
   heating_type varchar(30),
+  has_pictures boolean not null,
   created_on timestamp default current_timestamp not null,
   modified_on timestamp default current_timestamp not null
 );
