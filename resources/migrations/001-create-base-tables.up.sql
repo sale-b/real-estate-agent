@@ -20,13 +20,14 @@ CREATE TABLE real_estates (
   modified_on timestamp default current_timestamp not null
 );
 
-CREATE TABLE real_estates_images (
-  url varchar primary key,
+create table real_estates_images (
+  id bigserial primary key,
+  url varchar unique,
   real_estate_id bigint,
-  CONSTRAINT fk_real_estate
-      FOREIGN KEY(real_estate_id)
-  	  REFERENCES real_estates(id)
-  	  ON DELETE CASCADE
+  constraint fk_real_estate
+      foreign key(real_estate_id)
+  	  references real_estates(id)
+  	  on delete cascade
 );
 
 create table users(
@@ -45,8 +46,8 @@ create table persistent_logins (
 	user_id bigint not null,
 	token varchar(64) not null,
 	last_used timestamp default current_timestamp not null,
-	CONSTRAINT fk_user_session
-          FOREIGN KEY(user_id)
-      	  REFERENCES users(id)
-      	  ON DELETE CASCADE
+	constraint fk_user_session
+          foreign key(user_id)
+      	  references users(id)
+      	   on delete cascade
 );

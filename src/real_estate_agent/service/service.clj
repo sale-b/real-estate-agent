@@ -75,7 +75,7 @@
     (response (let [db-page (vec (dao/get-paged-real-estates (:filters request) (- (:page request) 1)))]
                 {:ads        (vec (map #(update-in % [:description] make-short-description) db-page))
                  :pagination {:currentPage (:page request)
-                              :totalPages  (int (:total_pages (dao/get-total-pages-number)))}
+                              :totalPages  (int (:total_pages (dao/get-total-pages-number (:filters request))))}
                  }))
     (bad-request "Page number must be higher than zero.")))
 
@@ -95,3 +95,11 @@
              :furnitureTypes  (into [] (map #(:furniture %) (dao/get-all-furniture-types)))
              }))
 
+(defn get-micro-locations-for-location
+  [locations]
+  (response {
+             :microLocations (into [] (map #(:micro_location %)
+                                           (if (> (count (remove clojure.string/blank? (:locations locations))) 0)
+                                           (dao/get-all-micro-locations-for-location (remove clojure.string/blank? (:locations locations)))
+                                           (dao/get-all-micro-locations))))
+             }))

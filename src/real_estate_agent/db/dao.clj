@@ -113,13 +113,11 @@
 
 (defn prepare-query
   [filter]
-  (str "select  distinct on (id) re.id, re.tittle, re.phone, re.location, re.micro_location, re.price, re.\"type\", re.ad_type, re.rooms_number, re.floor, re.description, re.living_space_area, re.furniture, re.heating_type, re.created_on, rei.url as img_url "
-       "from real_estates re "
-       "left join real_estates_images  rei "
-       "on   re.id = "
-       "( "
-       "select rei.real_estate_id from real_estates_images where real_estate_id = re.id order by id limit 1 "
-       ") "
+  (str
+       "from real_estates ad "
+       "join (select min (rei.id) \"img_id\", rei.real_estate_id "
+       "from real_estates_images rei group by  rei.real_estate_id order by  rei.real_estate_id) B "
+       "ON ad.id = B.real_estate_id JOIN real_estates_images img  ON img.id = B.img_id "
        "where 1 = 1 "
        (if (and (not (nil? filter)) (valid? (:priceHigher filter)))
          "and price >= ? "
@@ -177,7 +175,7 @@
        (if (and (not (nil? filter)) (:hasPictures filter))
          "and has_pictures = true "
          "")
-       "order by re.id desc "
+       "order by ad.id desc "
        "limit ? "                                           ;ads per page
        "offset ?"))
 
@@ -185,11 +183,13 @@
 (defn get-paged-real-estates
   [filter page-number]
   (db/query db
-            (into [] (concat [(prepare-query filter)] (prepare-arguments filter page-number)))))
+            (into [] (concat [(str "select ad.*, img.url as img_url " (prepare-query filter))] (prepare-arguments filter page-number)))))
 
 (defn get-total-pages-number
-  []
-  (first (db/query db ["select greatest(ceiling(count(id) / ?), 1) as total_pages from real_estates" page-size])))
+  [filter]
+  (first (db/query db
+            (into [] (concat [(subs (str "select ceiling(count(ad.id)::numeric/ ?) as total_pages " (prepare-query filter)) 0 (+ (count (prepare-query filter)) 19))] (seq [page-size]) (drop-last 2 (prepare-arguments filter 0)))))))
+
 
 (defn get-all-locations
   []
@@ -200,6 +200,14 @@
   []
   (db/query db
             ["select distinct micro_location from real_estates order by micro_location asc"]))
+
+(defn get-all-micro-locations-for-location
+  [locations]
+  (db/query db
+            (into [] (concat [(str "select distinct micro_location from real_estates where \"location\" in ( "
+            (clojure.string/join ", " (take (count (remove clojure.string/blank? locations)) (repeat "?")))
+            " ) order by micro_location asc")] (flatten (remove clojure.string/blank? locations))))))
+
 
 (defn get-all-real-estate-types
   []
