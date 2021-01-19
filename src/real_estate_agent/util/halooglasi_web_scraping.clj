@@ -91,7 +91,7 @@
    :floor             (get-floor page)
    :description       (get-description page)
    :location          (get-location page)
-   :micro-location    (get-micro-location page)
+   :micro_location    (get-micro-location page)
    :geolocation       (get-geolocation page)
    :living_space_area (get-living-space-area page)
    :furniture         (get-furniture page)
@@ -99,7 +99,7 @@
    :pictures          (get-pictures page)
    :has_pictures      (> (count (get-pictures page)) 0)
    :advertiser        (get-advertiser page)
-   :phone             (get-phone page)
+   ;:phone             (get-phone page)
    })
 
 (defn get-ads-url-list [page]
@@ -128,6 +128,7 @@
             (assoc (read-ad
                      (html-page current-url))
               :url current-url))
-          (catch org.postgresql.util.PSQLException e (println (str "CAUGHT EXCEPTION: " (.getMessage e) " " current-url)))))
+          (catch org.postgresql.util.PSQLException e
+            (println (str "CAUGHT EXCEPTION: " (.getMessage e) " " current-url)))))
       (recur (+ page-number 1))))
   )

@@ -129,7 +129,7 @@
       (is (= "44.809900,20.421300" (:geolocation ad)))
       (is (= 260000.0 (:price ad)))
       (is (= "Opština Novi Beograd" (:location ad)))
-      (is (= "Arena" (:micro-location ad)))
+      (is (= "Arena" (:micro_location ad)))
       (is (= 130.0 (:living_space_area ad)))
       (is (= "Agencija" (:advertiser ad)))
       (is (= "Stan" (:type ad)))
