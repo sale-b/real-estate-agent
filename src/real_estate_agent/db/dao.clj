@@ -115,9 +115,9 @@
   [filter]
   (str
        "from real_estates ad "
-       "join (select min (rei.id) \"img_id\", rei.real_estate_id "
+       "left join (select min (rei.id) \"img_id\", rei.real_estate_id "
        "from real_estates_images rei group by  rei.real_estate_id order by  rei.real_estate_id) B "
-       "ON ad.id = B.real_estate_id JOIN real_estates_images img  ON img.id = B.img_id "
+       "ON ad.id = B.real_estate_id left join real_estates_images img  ON img.id = B.img_id "
        "where 1 = 1 "
        (if (and (not (nil? filter)) (valid? (:priceHigher filter)))
          "and price >= ? "
