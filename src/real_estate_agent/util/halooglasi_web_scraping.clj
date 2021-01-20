@@ -2,7 +2,8 @@
   (:require [clojure.data.json :as json]
             [net.cgrand.enlive-html :as html]
             [real-estate-agent.db.dao :as dao]
-            [real-estate-agent.util.cast :as cast])
+            [real-estate-agent.util.cast :as cast]
+            [clj-http.client :as client])
   (:use [clojure.string :only [index-of]]))
 
 (defn get-substring [string start end]
@@ -38,6 +39,12 @@
 (defn get-price [page]
   (:cena_d (:OtherFields (ad-content page))))
 
+(defn get-classified [page]
+  (let [classified (ad-content page)]
+    (json/write-str {:adId     (cast/string-to-long (:Id classified))
+                     :partyId  (cast/string-to-long (:AdvertiserId classified))
+                     :adKindId (cast/string-to-long (:AdKindId classified))})))
+
 (defn get-location [page]
   (:lokacija_s (:OtherFields (ad-content page))))
 
@@ -67,7 +74,9 @@
 
 (defn get-description [page]
   ;sometimes html tags can occur in text
-  (clojure.string/replace (:TextHtml (ad-content page)) #"<[^>]*>" ""))
+  (clojure.string/replace
+    (clojure.string/replace (:TextHtml (ad-content page)) #"<[^>]*>|&nbsp;" "")
+    #"\s\s+" " "))
 
 (defn get-pictures [page]
   (:ImageURLs (ad-content page)))
@@ -79,7 +88,14 @@
   (:GeoLocationRPT (ad-content page)))
 
 (defn get-phone [page]
-  (:Phone1 (first (:ContactInfos (:Advertiser (contact-data page))))))
+ (get-substring (:body (client/post "https://www.halooglasi.com/AdAdvertiserInfoWidget/AdvertiserPhones"
+                      {
+                       :body    (get-classified page)
+                       :headers {"Content-Type"     "application/json; charset=utf-8"
+                                 "X-Requested-With" "XMLHttpRequest"}
+                       :accept  :json}))
+                "<a href='tel:"
+                "'>"))
 
 (defn read-ad [page]
   {:tittle            (get-tittle page)
@@ -99,7 +115,7 @@
    :pictures          (get-pictures page)
    :has_pictures      (> (count (get-pictures page)) 0)
    :advertiser        (get-advertiser page)
-   ;:phone             (get-phone page)
+   :phone             (get-phone page)
    })
 
 (defn get-ads-url-list [page]

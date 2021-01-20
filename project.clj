@@ -18,7 +18,8 @@
                  [overtone/at-at "1.2.0"]
                  [clj-time "0.15.2"]
                  [cljts "0.2.0"]
-                 [crypto-password "0.2.1"]]
+                 [crypto-password "0.2.1"]
+                 [clj-http "3.10.3"]]
 
   :plugins [[lein-environ "1.2.0"]
             [lein-ancient "0.6.15"]]

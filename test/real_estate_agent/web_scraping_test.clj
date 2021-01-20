@@ -19,17 +19,23 @@
     (is (= "44.809900,20.421300" coordinates))
     )))
 
-(deftest get-phone-test
-  (testing "should return phone from a webpage"
-    (let [phone (get-phone (fetch-page "resources\\test_files\\sample-ad.html"))]
-      (is (= "065/662-3984" phone))
-      )))
+;NOT WEB INDEPENDENT, WHEN AD GET DELETED TEST WILL FAIL
+;(deftest get-phone-test
+;  (testing "should return phone from a webpage"
+;    (let [phone (get-phone (fetch-page "resources\\test_files\\sample-ad.html"))]
+;      (is (= "065/662-3984" phone))
+;      )))
 
 (deftest get-price-test
   (testing "should return ad price from a webpage"
     (let [price (get-price (fetch-page "resources\\test_files\\sample-ad.html"))]
       (is (= 260000.0 price))
       )))
+
+(deftest get-classified-test
+  (testing "should return classified data from a webpage"
+    (let [classified (get-classified (fetch-page "resources\\test_files\\sample-ad.html"))]
+      (is (= "{\"adId\":5425636159803,\"partyId\":371346,\"adKindId\":4}" classified)))))
 
 (deftest get-location-test
   (testing "should return ad location from a webpage"
