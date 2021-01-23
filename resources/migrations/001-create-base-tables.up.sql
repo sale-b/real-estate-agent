@@ -51,3 +51,31 @@ create table persistent_logins (
       	  references users(id)
       	   on delete cascade
 );
+
+CREATE TABLE saved_filters (
+  id bigserial primary key,
+  tittle varchar(100),
+  max_price numeric,
+  min_price numeric,
+  ad_types varchar,
+  real_estate_types varchar,
+  max_rooms_number numeric,
+  min_rooms_number numeric,
+  floors varchar,
+  locations varchar,
+  micro_locations varchar,
+  geolocation varchar,
+  max_living_space_area numeric,
+  min_living_space_area numeric,
+  furniture varchar,
+  heating_types varchar,
+  has_pictures boolean default false,
+  email_subscribed boolean default false,
+  user_id bigint,
+  created_on timestamp default current_timestamp not null,
+  modified_on timestamp default current_timestamp not null,
+  constraint fk_user
+       foreign key(user_id)
+    	references users(id)
+    	on delete cascade
+);

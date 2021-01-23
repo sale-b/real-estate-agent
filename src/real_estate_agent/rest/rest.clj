@@ -32,6 +32,7 @@
            (POST "/page" [] (fn [req]( service/get-ads-paged (:body req))))
            (GET "/get-form-props" [] (service/get-all-form-data))
            (POST "/refresh-micro-locations" [] (fn [req](service/get-micro-locations-for-location (:body req))))
+           (POST "/save-filters" [] (fn [req] (service/save-filters (:headers req) (:body req))))
            (route/resources "/"))
 
 (def app (wrap-json-response (wrap-json-body (cors-handler my-routes) {:keywords? true})))

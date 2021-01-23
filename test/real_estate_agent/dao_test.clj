@@ -141,7 +141,7 @@
                        :phone             "061/33-33-33"
                        :floor             "7"
                        :heating_type      "EG"
-                       :has_pictures true}
+                       :has_pictures      true}
           ]
       (let [db-response (dao/insert-real-estate real-estate)]
         (is (not (nil? db-response)))
@@ -770,4 +770,30 @@
       (is (= 1 (:id (second ads))))
       )
     ))
+
+(deftest insert-saved-filter-test
+  (testing "should insert a new saved filter into db and assign it id, created_on, modified on"
+    (let [saved-filter {:locations         ["Opština Novi Beograd" "Opština Vračаr"]
+                        :geolocation       [[20.444243902536996 44.80109646251293] [20.497458929392465 44.78391960228373] [20.423472875925665 44.77063753295582] [20.444243902536996 44.80109646251293]]
+                        :floors            ["7" "VPR"]
+                        :min_rooms_number  1.5
+                        :has_pictures      false}
+          ]
+      (let [db-response (dao/insert-saved-filter saved-filter 1)]
+        (is (not (nil? db-response)))
+        (is (not (nil? (:id db-response))))
+        (is (= "[\"Opština Novi Beograd\" \"Opština Vračаr\"]" (:locations db-response)))
+        (is (= 1 (dao/count-users-saved-filters 1)))
+        (let [db-saved-filter (first (dao/get-all-saved-filters (:id db-response)))]
+          (is (not (nil? db-saved-filter)))
+          (is (= ["Opština Novi Beograd" "Opština Vračаr"] (:locations db-saved-filter)))
+          (is (= ["7" "VPR"] (:floors db-saved-filter)))
+          (is (= [[20.444243902536996 44.80109646251293] [20.497458929392465 44.78391960228373] [20.423472875925665 44.77063753295582] [20.444243902536996 44.80109646251293]] (:geolocation db-saved-filter)))
+          (is (== 1.5 (:min_rooms_number db-saved-filter)))
+          (is (= 1 (:user_id db-saved-filter)))
+          (is (= false (:has_pictures db-saved-filter)))
+          (is (not (nil? (:created_on db-saved-filter))))
+          (is (not (nil? (:modified_on db-saved-filter))))
+          )
+        ))))
 
