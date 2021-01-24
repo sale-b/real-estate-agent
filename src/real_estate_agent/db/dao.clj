@@ -68,7 +68,7 @@
 
 (defn delete-user
   [user]
-  (db/delete! db :users ["id = ?" (:id user)]))
+  (first (db/delete! db :users ["id = ?" (:id user)])))
 
 (defn insert-real-estate
   [real-estate]
@@ -267,36 +267,40 @@
 
 
 (defn delete-saved-filter
-  [saved-filter]
-  (db/delete! db :saved_filters ["id = ?" (:id saved-filter)]))
+  [id]
+  (first (db/delete! db :saved_filters ["id = ?" id])))
 
-(defn get-all-saved-filters
+(defn get-saved-filter-by-id
+  [id]
+  (let [saved-filter (first (db/query db
+                                      ["select * from saved_filters where id = ?" id]))]
+
+    {:locations             (if (empty? (:locations saved-filter)) nil (read-string (:locations saved-filter)))
+     :ad_types              (if (empty? (:ad_types saved-filter)) nil (read-string (:ad_types saved-filter)))
+     :floors                (if (empty? (:floors saved-filter)) nil (read-string (:floors saved-filter)))
+     :furniture             (if (empty? (:furniture saved-filter)) nil (read-string (:furniture saved-filter)))
+     :real_estate_types     (if (empty? (:real_estate_types saved-filter)) nil (read-string (:real_estate_types saved-filter)))
+     :micro_locations       (if (empty? (:micro_locations saved-filter)) nil (read-string (:micro_locations saved-filter)))
+     :heating_types         (if (empty? (:heating_types saved-filter)) nil (read-string (:heating_types saved-filter)))
+     :geolocation           (if (empty? (:geolocation saved-filter)) nil (read-string (:geolocation saved-filter)))
+     :max_price             (:max_price saved-filter)
+     :min_price             (:min_price saved-filter)
+     :max_living_space_area (:max_living_space_area saved-filter)
+     :min_living_space_area (:min_living_space_area saved-filter)
+     :max_rooms_number      (:max_rooms_number saved-filter)
+     :min_rooms_number      (:min_rooms_number saved-filter)
+     :tittle                (:tittle saved-filter)
+     :has_pictures          (:has_pictures saved-filter)
+     :email_subscribed      (:email_subscribed saved-filter)
+     :created_on            (:created_on saved-filter)
+     :modified_on           (:modified_on saved-filter)
+     :user_id               id
+     }))
+
+(defn get-saved-filter-by-user-id
   [user-id]
-  (for [saved-filter (db/query db
-                               ["select * from saved_filters where user_id = ? order by modified_on desc" user-id])
-        :let [converted-filters
-              {:locations             (if (empty? (:locations saved-filter)) nil (read-string (:locations saved-filter)))
-               :ad_types              (if (empty? (:ad_types saved-filter)) nil (read-string (:ad_types saved-filter)))
-               :floors                (if (empty? (:floors saved-filter)) nil (read-string (:floors saved-filter)))
-               :furniture             (if (empty? (:furniture saved-filter)) nil (read-string (:furniture saved-filter)))
-               :real_estate_types     (if (empty? (:real_estate_types saved-filter)) nil (read-string (:real_estate_types saved-filter)))
-               :micro_locations       (if (empty? (:micro_locations saved-filter)) nil (read-string (:micro_locations saved-filter)))
-               :heating_types         (if (empty? (:heating_types saved-filter)) nil (read-string (:heating_types saved-filter)))
-               :geolocation           (if (empty? (:geolocation saved-filter)) nil (read-string (:geolocation saved-filter)))
-               :max_price             (:max_price saved-filter)
-               :min_price             (:min_price saved-filter)
-               :max_living_space_area (:max_living_space_area saved-filter)
-               :min_living_space_area (:min_living_space_area saved-filter)
-               :max_rooms_number      (:max_rooms_number saved-filter)
-               :min_rooms_number      (:min_rooms_number saved-filter)
-               :tittle                (:tittle saved-filter)
-               :has_pictures          (:has_pictures saved-filter)
-               :email_subscribed      (:email_subscribed saved-filter)
-               :created_on            (:created_on saved-filter)
-               :modified_on           (:modified_on saved-filter)
-               :user_id               user-id
-               }]]
-    converted-filters))
+  (db/query db
+            ["select id, tittle, email_subscribed from saved_filters where user_id = ?" user-id]))
 
 (defn count-users-saved-filters
   [user-id]

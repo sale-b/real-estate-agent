@@ -35,30 +35,32 @@
   [request-headers request-body]
   (if (nil? request-headers)
     (bad-request {:message "Not authorized!"})
-    (if (authorized-identity? (request-headers "x-auth-token") (:userId request-body))
-      (let [f (dao/insert-saved-filter {:locations             (:selectedLocations (:filters request-body))
-                                        :ad_types              (:adType (:filters request-body))
-                                        :floors                (:floors (:filters request-body))
-                                        :furniture             (:furniture (:filters request-body))
-                                        :real_estate_types     (:realEstateType (:filters request-body))
-                                        :micro_locations       (:selectedMicroLocations (:filters request-body))
-                                        :geolocation          (:coordinates (:filters request-body))
-                                        :heating_types         (:heatingType (:filters request-body))
-                                        :max_price             (cast/string-to-double (:selectedMaxPrice (:filters request-body)))
-                                        :min_price             (cast/string-to-double (:selectedMinPrice (:filters request-body)))
-                                        :max_living_space_area (cast/string-to-double (:selectedMaxArea (:filters request-body)))
-                                        :min_living_space_area (cast/string-to-double (:selectedMinArea (:filters request-body)))
-                                        :max_rooms_number      (cast/string-to-double (:selectedMaxRooms (:filters request-body)))
-                                        :min_rooms_number      (cast/string-to-double (:selectedMinRooms (:filters request-body)))
-                                        :tittle                (:tittle (:filters request-body))
-                                        :has_pictures          (:pictures (:filters request-body))
-                                        :email_subscribed      (:subscribed (:filters request-body))
+    (if (authorized-identity? (request-headers "x-auth-token")  (request-headers "user-id"))
+      (if (> 3 (dao/count-users-saved-filters (cast/string-to-long (request-headers "user-id"))))
+        (let [f (dao/insert-saved-filter {:locations             (:selectedLocations (:filters request-body))
+                                          :ad_types              (:adType (:filters request-body))
+                                          :floors                (:floors (:filters request-body))
+                                          :furniture             (:furniture (:filters request-body))
+                                          :real_estate_types     (:realEstateType (:filters request-body))
+                                          :micro_locations       (:selectedMicroLocations (:filters request-body))
+                                          :geolocation           (:coordinates (:filters request-body))
+                                          :heating_types         (:heatingType (:filters request-body))
+                                          :max_price             (cast/string-to-double (:selectedMaxPrice (:filters request-body)))
+                                          :min_price             (cast/string-to-double (:selectedMinPrice (:filters request-body)))
+                                          :max_living_space_area (cast/string-to-double (:selectedMaxArea (:filters request-body)))
+                                          :min_living_space_area (cast/string-to-double (:selectedMinArea (:filters request-body)))
+                                          :max_rooms_number      (cast/string-to-double (:selectedMaxRooms (:filters request-body)))
+                                          :min_rooms_number      (cast/string-to-double (:selectedMinRooms (:filters request-body)))
+                                          :tittle                (:tittle (:filters request-body))
+                                          :has_pictures          (:pictures (:filters request-body))
+                                          :email_subscribed      (:subscribed (:filters request-body))
 
-                                        } (cast/string-to-long (:userId request-body)))]
-        (println f)
-        (if (empty? f)
-          (bad-request {:message "Error saving filter!"})
-          (response f)))
+                                          } (cast/string-to-long (request-headers "user-id")))]
+          (println f)
+          (if (empty? f)
+            (bad-request {:message "Error saving filter!"})
+            (response f)))
+        (bad-request {:message "You can not save more than 3 filters!"}))
       (bad-request {:message "Not authorized!"}))))
 
 (defn register
@@ -98,6 +100,52 @@
     (if (nil? ad)
       (bad-request {:message "Ad is not found"})
       (response ad))))
+
+(defn get-saved-filters-by-user-id
+  [user-id request-headers]
+  (if (authorized-identity? (request-headers "x-auth-token") user-id)
+    (let [saved-filters (dao/get-saved-filter-by-user-id (cast/string-to-long user-id))]
+      (if (nil? saved-filters)
+        (bad-request {:message "Filters are not found"})
+        (response {:savedFilters (vec saved-filters)})))
+    (bad-request {:message "Not authorized!"})))
+
+
+(defn get-saved-filter-by-id
+  [id request-headers]
+  (if (authorized-identity? (request-headers "x-auth-token") (request-headers "user-id"))
+    (let [saved-filter (dao/get-saved-filter-by-id (cast/string-to-long id))]
+      (if (nil? saved-filter)
+        (bad-request {:message "Filter is not found"})
+        (response {:savedFilter
+                   {:selectedLocations      (:locations saved-filter)
+                    :adType                 (:ad_types saved-filter)
+                    :floors                 (:floors saved-filter)
+                    :furniture              (:furniture saved-filter)
+                    :realEstateType         (:real_estate_types saved-filter)
+                    :selectedMicroLocations (:micro_locations saved-filter)
+                    :coordinates            (:geolocation saved-filter)
+                    :heatingType            (:heating_types saved-filter)
+                    :selectedMaxPrice       (:max_price saved-filter)
+                    :selectedMinPrice       (:min_price saved-filter)
+                    :selectedMaxArea        (:max_living_space_area saved-filter)
+                    :selectedMinArea        (:min_living_space_area saved-filter)
+                    :selectedMaxRooms       (:max_rooms_number saved-filter)
+                    :selectedMinRooms       (:min_rooms_number saved-filter)
+                    :tittle                 (:tittle saved-filter)
+                    :pictures               (:has_pictures saved-filter)
+                    :subscribed             (:email_subscribed saved-filter)
+                    }})))
+    (bad-request {:message "Not authorized!"})))
+
+(defn delete-saved-filter-by-id
+  [id request-headers]
+  (if (authorized-identity? (request-headers "x-auth-token") (request-headers "user-id"))
+    (let [delete-filter (dao/delete-saved-filter (cast/string-to-long id))]
+      (if (= 0 delete-filter)
+        (bad-request {:message "Filter is not found"})
+        (response {:deleted delete-filter})))
+    (bad-request {:message "Not authorized!"})))
 
 (defn get-ads-paged
   [request]
