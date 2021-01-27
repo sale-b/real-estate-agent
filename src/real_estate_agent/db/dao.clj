@@ -1,12 +1,13 @@
 (ns real-estate-agent.db.dao
-  (:import [java.sql PreparedStatement])
+  (:import [java.sql PreparedStatement]
+           (java.util Date))
   (:require [clojure.java.jdbc :as db]
             [environ.core :refer [env]]
             [clj-time.coerce :as c]
             [crypto.password.scrypt :as password])
   (:use ring.util.response))
 
-(extend-type java.util.Date
+(extend-type Date
   db/ISQLParameter
   (set-parameter [v ^PreparedStatement stmt idx]
     (.setTimestamp stmt idx (c/to-sql-time v))))
@@ -19,7 +20,7 @@
    :host     (:database-host env)
    :port     (:database-port env)})
 
-(def page-size 10)
+
 
 (defn valid? [v] (if (not (nil? v))
                    (if (number? v)
@@ -56,14 +57,14 @@
 (defn update-session-duration-by-id
   [id]
   (db/update! db :persistent_logins
-              {:last_used (java.util.Date.)}
+              {:last_used (Date.)}
               ["id = ?" id]))
 
 
 (defn update-user
   [user]
   (db/update! db :users
-              (assoc user :modified_on (java.util.Date.))
+              (assoc user :modified_on (Date.))
               ["id = ?" (:id user)]))
 
 (defn delete-user
@@ -90,7 +91,7 @@
 
 
 (defn prepare-arguments
-  [filter page-number]
+  [filter page-number page-size]
   (let [valid-filter [(:priceHigher filter)
                       (:priceLes filter)
                       (:spaceAreaHigher filter)
@@ -181,14 +182,18 @@
 
 
 (defn get-paged-real-estates
-  [filter page-number]
+  [filter page-number page-size]
   (db/query db
-            (into [] (concat [(str "select ad.*, img.url as img_url " (prepare-query filter))] (prepare-arguments filter page-number)))))
+            (into [] (concat [(str "select ad.*, img.url as img_url " (prepare-query filter))] (prepare-arguments filter page-number page-size)))))
+
+(defn get-all-real-estates
+  []
+  (db/query db ["select id, geolocation from real_estates"]))
 
 (defn get-total-pages-number
-  [filter]
+  [filter page-size]
   (first (db/query db
-                   (into [] (concat [(subs (str "select ceiling(count(ad.id)::numeric/ ?) as total_pages " (prepare-query filter)) 0 (+ (count (prepare-query filter)) 19))] (seq [page-size]) (drop-last 2 (prepare-arguments filter 0)))))))
+                   (into [] (concat [(subs (str "select ceiling(count(ad.id)::numeric/ ?) as total_pages " (prepare-query filter)) 0 (+ (count (prepare-query filter)) 19))] (seq [page-size]) (drop-last 2 (prepare-arguments filter 0 page-size)))))))
 
 
 (defn get-all-locations

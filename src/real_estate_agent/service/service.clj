@@ -11,6 +11,8 @@
 
 (def random-uuid #(.toString (java.util.UUID/randomUUID)))
 
+(def page-size 10)
+
 (defn authorized? [token]
   (= 1 (first (dao/update-session-duration-by-id
                 (:id (dao/get-unexpired-session token (cast/string-to-long (:session-allowed-inactivity-seconds env))))))))
@@ -35,7 +37,7 @@
   [request-headers request-body]
   (if (nil? request-headers)
     (bad-request {:message "Not authorized!"})
-    (if (authorized-identity? (request-headers "x-auth-token")  (request-headers "user-id"))
+    (if (authorized-identity? (request-headers "x-auth-token") (request-headers "user-id"))
       (if (> 3 (dao/count-users-saved-filters (cast/string-to-long (request-headers "user-id"))))
         (let [f (dao/insert-saved-filter {:locations             (:selectedLocations (:filters request-body))
                                           :ad_types              (:adType (:filters request-body))
@@ -147,20 +149,52 @@
         (response {:deleted delete-filter})))
     (bad-request {:message "Not authorized!"})))
 
-(defn get-ads-paged
+(defn get-ads-paged-without-geolocation
   [request]
   (if (> (:page request) 0)
-    (response (let [db-page (vec (dao/get-paged-real-estates (:filters request) (- (:page request) 1)))]
+    (response (let [db-page (vec (dao/get-paged-real-estates (:filters request) (- (:page request) 1) page-size))]
                 {:ads        (vec (map #(update-in % [:description] make-short-description) db-page))
                  :pagination {:currentPage (:page request)
-                              :totalPages  (int (:total_pages (dao/get-total-pages-number (:filters request))))}
+                              :totalPages  (int (:total_pages (dao/get-total-pages-number (:filters request) page-size)))}
                  }))
     (bad-request {:message "Page number must be higher than zero."})))
 
+(defn coordinates-str-to-vec
+  [str-coordinates]
+  (sort (into []
+        (map #(read-string %)
+             (clojure.string/split str-coordinates #",")))))
+
 (defn is-geolocation-satisfied?
   [pol point]
-  (let [prepared-polygon (prep/prepare (geom/polygon (geom/linear-ring (into [] (map #(into () %) pol))) nil))]
-    (relation/contains? prepared-polygon point)))
+  (println pol)
+  (println point)
+  (let [prepared-polygon (prep/prepare (geom/polygon (geom/linear-ring (into [] (map #(apply geom/c %) pol))) nil))]
+    (relation/contains? prepared-polygon (geom/point (apply geom/c point)))))
+
+(defn get-ads-paged-with-geolocation
+  [request]
+  (let [ads-satisfying-geolocation (let [total-prefiltered-ads (int (:total_pages (dao/get-total-pages-number (:filters request) 1)))]
+                                     (let [prefiltered-ads (dao/get-paged-real-estates (:filters request) (- (:page request) 1) total-prefiltered-ads)]
+                                       (for [real-estate prefiltered-ads
+                                             :let [geolocation (:geolocation real-estate)]
+                                             :when (is-geolocation-satisfied? (:coordinates (:filters request))
+                                                                              (coordinates-str-to-vec geolocation))]
+                                         real-estate)))]
+    (response (let [db-page (take page-size (drop (* (- (:page request) 1) page-size) ads-satisfying-geolocation))]
+                {:ads        (vec (map #(update-in % [:description] make-short-description) db-page))
+                 :pagination {:currentPage (:page request)
+                              :totalPages  (int (Math/ceil (/ (count ads-satisfying-geolocation) page-size)))}
+                 }))))
+
+
+(defn get-ads-paged
+  [request]
+  (if (empty? (:coordinates (:filters request)))
+    (get-ads-paged-without-geolocation request)
+    (get-ads-paged-with-geolocation request)
+    ))
+
 
 (defn get-all-form-data
   []

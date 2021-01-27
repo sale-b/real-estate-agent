@@ -281,7 +281,7 @@
   (testing "should return ads with price higher than provided ordered by id desc"
     (let [ads (dao/get-paged-real-estates
                 {:priceHigher 105}
-                0)]
+                0 10)]
       (is (not (empty? ads)))
       (is (not (nil? ads)))
       (is (= 1 (count ads)))
@@ -290,7 +290,7 @@
       )
     (let [ads (dao/get-paged-real-estates
                 {:priceHigher 5}
-                0)]
+                0 10)]
       (is (not (empty? ads)))
       (is (not (nil? ads)))
       (is (= 2 (count ads)))
@@ -304,7 +304,7 @@
   (testing "should return ads with price les than provided ordered by id desc"
     (let [ads (dao/get-paged-real-estates
                 {:priceLes 105}
-                0)]
+                0 10)]
       (is (not (empty? ads)))
       (is (not (nil? ads)))
       (is (= 1 (count ads)))
@@ -313,7 +313,7 @@
       )
     (let [ads (dao/get-paged-real-estates
                 {:priceLes 260}
-                0)]
+                0 10)]
       (is (not (empty? ads)))
       (is (not (nil? ads)))
       (is (= 2 (count ads)))
@@ -327,7 +327,7 @@
   (testing "should return ads with price higher than provided ordered by id desc"
     (let [ads (dao/get-paged-real-estates
                 {:priceHigher 105}
-                0)]
+                0 10)]
       (is (not (empty? ads)))
       (is (not (nil? ads)))
       (is (= 1 (count ads)))
@@ -336,7 +336,7 @@
       )
     (let [ads (dao/get-paged-real-estates
                 {:priceHigher 5}
-                0)]
+                0 10)]
       (is (not (empty? ads)))
       (is (not (nil? ads)))
       (is (= 2 (count ads)))
@@ -350,7 +350,7 @@
   (testing "should return ads with space area les than provided ordered by id desc"
     (let [ads (dao/get-paged-real-estates
                 {:spaceAreaLes 55}
-                0)]
+                0 10)]
       (is (not (empty? ads)))
       (is (not (nil? ads)))
       (is (= 1 (count ads)))
@@ -359,7 +359,7 @@
       )
     (let [ads (dao/get-paged-real-estates
                 {:spaceAreaLes 70}
-                0)]
+                0 10)]
       (is (not (empty? ads)))
       (is (not (nil? ads)))
       (is (= 2 (count ads)))
@@ -374,7 +374,7 @@
   (testing "should return ads with space area higher than provided ordered by id desc"
     (let [ads (dao/get-paged-real-estates
                 {:spaceAreaHigher 55}
-                0)]
+                0 10)]
       (is (not (empty? ads)))
       (is (not (nil? ads)))
       (is (= 1 (count ads)))
@@ -383,7 +383,7 @@
       )
     (let [ads (dao/get-paged-real-estates
                 {:spaceAreaHigher 35}
-                0)]
+                0 10)]
       (is (not (empty? ads)))
       (is (not (nil? ads)))
       (is (= 2 (count ads)))
@@ -397,7 +397,7 @@
   (testing "should return ads with rooms number les than provided ordered by id desc"
     (let [ads (dao/get-paged-real-estates
                 {:roomsNumberLes 3.0}
-                0)]
+                0 10)]
       (is (not (empty? ads)))
       (is (not (nil? ads)))
       (is (= 1 (count ads)))
@@ -406,7 +406,7 @@
       )
     (let [ads (dao/get-paged-real-estates
                 {:roomsNumberLes 4.5}
-                0)]
+                0 10)]
       (is (not (empty? ads)))
       (is (not (nil? ads)))
       (is (= 2 (count ads)))
@@ -421,7 +421,7 @@
   (testing "should return ads with rooms number higher than provided ordered by id desc"
     (let [ads (dao/get-paged-real-estates
                 {:roomsNumberHigher 3.0}
-                0)]
+                0 10)]
       (is (not (empty? ads)))
       (is (not (nil? ads)))
       (is (= 1 (count ads)))
@@ -430,7 +430,7 @@
       )
     (let [ads (dao/get-paged-real-estates
                 {:roomsNumberHigher 1.5}
-                0)]
+                0 10)]
       (is (not (empty? ads)))
       (is (not (nil? ads)))
       (is (= 2 (count ads)))
@@ -444,7 +444,7 @@
   (testing "should return ads on provided locations ordered by id desc"
     (let [ads (dao/get-paged-real-estates
                 {:location ["Opština Vračаr"]}
-                0)]
+                0 10)]
       (is (not (empty? ads)))
       (is (not (nil? ads)))
       (is (= 1 (count ads)))
@@ -453,7 +453,7 @@
       )
     (let [ads (dao/get-paged-real-estates
                 {:location ["Opština Vračаr" "Opština Novi Beograd"]}
-                0)]
+                0 10)]
       (is (not (empty? ads)))
       (is (not (nil? ads)))
       (is (= 2 (count ads)))
@@ -464,7 +464,7 @@
       )
     (let [ads (dao/get-paged-real-estates
                 {}
-                0)]
+                0 10)]
       (is (not (empty? ads)))
       (is (not (nil? ads)))
       (is (= 2 (count ads)))
@@ -475,7 +475,7 @@
       )
     (let [ads (dao/get-paged-real-estates
                 {:location nil}
-                0)]
+                0 10)]
       (is (not (empty? ads)))
       (is (not (nil? ads)))
       (is (= 2 (count ads)))
@@ -490,7 +490,7 @@
   (testing "should return ads on provided micro locations ordered by id desc"
     (let [ads (dao/get-paged-real-estates
                 {:microLocation ["Franš"]}
-                0)]
+                0 10)]
       (is (not (empty? ads)))
       (is (not (nil? ads)))
       (is (= 1 (count ads)))
@@ -499,7 +499,7 @@
       )
     (let [ads (dao/get-paged-real-estates
                 {:microLocation ["Arena" "Franš"]}
-                0)]
+                0 10)]
       (is (not (empty? ads)))
       (is (not (nil? ads)))
       (is (= 2 (count ads)))
@@ -510,7 +510,7 @@
       )
     (let [ads (dao/get-paged-real-estates
                 {}
-                0)]
+                0 10)]
       (is (not (empty? ads)))
       (is (not (nil? ads)))
       (is (= 2 (count ads)))
@@ -521,7 +521,7 @@
       )
     (let [ads (dao/get-paged-real-estates
                 {:microLocation nil}
-                0)]
+                0 10)]
       (is (not (empty? ads)))
       (is (not (nil? ads)))
       (is (= 2 (count ads)))
@@ -536,7 +536,7 @@
   (testing "should return ads on provided real estate type ordered by id desc"
     (let [ads (dao/get-paged-real-estates
                 {:type ["Kuća"]}
-                0)]
+                0 10)]
       (is (not (empty? ads)))
       (is (not (nil? ads)))
       (is (= 1 (count ads)))
@@ -545,7 +545,7 @@
       )
     (let [ads (dao/get-paged-real-estates
                 {:type ["Stan" "Kuća"]}
-                0)]
+                0 10)]
       (is (not (empty? ads)))
       (is (not (nil? ads)))
       (is (= 2 (count ads)))
@@ -556,7 +556,7 @@
       )
     (let [ads (dao/get-paged-real-estates
                 {}
-                0)]
+                0 10)]
       (is (not (empty? ads)))
       (is (not (nil? ads)))
       (is (= 2 (count ads)))
@@ -567,7 +567,7 @@
       )
     (let [ads (dao/get-paged-real-estates
                 {:type nil}
-                0)]
+                0 10)]
       (is (not (empty? ads)))
       (is (not (nil? ads)))
       (is (= 2 (count ads)))
@@ -582,7 +582,7 @@
   (testing "should return ads on provided real estate ad type ordered by id desc"
     (let [ads (dao/get-paged-real-estates
                 {:adType ["Izdavanje"]}
-                0)]
+                0 10)]
       (is (not (empty? ads)))
       (is (not (nil? ads)))
       (is (= 1 (count ads)))
@@ -591,7 +591,7 @@
       )
     (let [ads (dao/get-paged-real-estates
                 {:adType ["Izdavanje" "Prodaja"]}
-                0)]
+                0 10)]
       (is (not (empty? ads)))
       (is (not (nil? ads)))
       (is (= 2 (count ads)))
@@ -602,7 +602,7 @@
       )
     (let [ads (dao/get-paged-real-estates
                 {}
-                0)]
+                0 10)]
       (is (not (empty? ads)))
       (is (not (nil? ads)))
       (is (= 2 (count ads)))
@@ -613,7 +613,7 @@
       )
     (let [ads (dao/get-paged-real-estates
                 {:adType nil}
-                0)]
+                0 10)]
       (is (not (empty? ads)))
       (is (not (nil? ads)))
       (is (= 2 (count ads)))
@@ -628,7 +628,7 @@
   (testing "should return ads on provided heating type ordered by id desc"
     (let [ads (dao/get-paged-real-estates
                 {:heatingType ["CG"]}
-                0)]
+                0 10)]
       (is (not (empty? ads)))
       (is (not (nil? ads)))
       (is (= 1 (count ads)))
@@ -637,7 +637,7 @@
       )
     (let [ads (dao/get-paged-real-estates
                 {:heatingType ["CG" "EG"]}
-                0)]
+                0 10)]
       (is (not (empty? ads)))
       (is (not (nil? ads)))
       (is (= 2 (count ads)))
@@ -648,7 +648,7 @@
       )
     (let [ads (dao/get-paged-real-estates
                 {}
-                0)]
+                0 10)]
       (is (not (empty? ads)))
       (is (not (nil? ads)))
       (is (= 2 (count ads)))
@@ -659,7 +659,7 @@
       )
     (let [ads (dao/get-paged-real-estates
                 {:heatingType nil}
-                0)]
+                0 10)]
       (is (not (empty? ads)))
       (is (not (nil? ads)))
       (is (= 2 (count ads)))
@@ -674,7 +674,7 @@
   (testing "should return ads on provided floor ordered by id desc"
     (let [ads (dao/get-paged-real-estates
                 {:floor ["VPR"]}
-                0)]
+                0 10)]
       (is (not (empty? ads)))
       (is (not (nil? ads)))
       (is (= 1 (count ads)))
@@ -683,7 +683,7 @@
       )
     (let [ads (dao/get-paged-real-estates
                 {:floor ["VPR" "7"]}
-                0)]
+                0 10)]
       (is (not (empty? ads)))
       (is (not (nil? ads)))
       (is (= 2 (count ads)))
@@ -694,7 +694,7 @@
       )
     (let [ads (dao/get-paged-real-estates
                 {}
-                0)]
+                0 10)]
       (is (not (empty? ads)))
       (is (not (nil? ads)))
       (is (= 2 (count ads)))
@@ -705,7 +705,7 @@
       )
     (let [ads (dao/get-paged-real-estates
                 {:floor nil}
-                0)]
+                0 10)]
       (is (not (empty? ads)))
       (is (not (nil? ads)))
       (is (= 2 (count ads)))
@@ -720,7 +720,7 @@
   (testing "should return ads with pictures ordered by id desc"
     (let [ads (dao/get-paged-real-estates
                 {:hasPictures true}
-                0)]
+                0 10)]
       (is (not (empty? ads)))
       (is (not (nil? ads)))
       (is (= 1 (count ads)))
@@ -732,7 +732,7 @@
   (testing "should return ads on provided furniture type ordered by id desc"
     (let [ads (dao/get-paged-real-estates
                 {:furniture ["namešteno"]}
-                0)]
+                0 10)]
       (is (not (empty? ads)))
       (is (not (nil? ads)))
       (is (= 1 (count ads)))
@@ -741,7 +741,7 @@
       )
     (let [ads (dao/get-paged-real-estates
                 {:furniture ["namešteno" nil]}
-                0)]
+                0 10)]
       (is (not (empty? ads)))
       (is (not (nil? ads)))
       (is (= 1 (count ads)))
@@ -750,7 +750,7 @@
       )
     (let [ads (dao/get-paged-real-estates
                 {}
-                0)]
+                0 10)]
       (is (not (empty? ads)))
       (is (not (nil? ads)))
       (is (= 2 (count ads)))
@@ -761,7 +761,7 @@
       )
     (let [ads (dao/get-paged-real-estates
                 {:microLocation nil}
-                0)]
+                0 10)]
       (is (not (empty? ads)))
       (is (not (nil? ads)))
       (is (= 2 (count ads)))
