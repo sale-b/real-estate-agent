@@ -167,15 +167,13 @@
 
 (defn is-geolocation-satisfied?
   [pol point]
-  (println pol)
-  (println point)
   (let [prepared-polygon (prep/prepare (geom/polygon (geom/linear-ring (into [] (map #(apply geom/c %) pol))) nil))]
     (relation/contains? prepared-polygon (geom/point (apply geom/c point)))))
 
 (defn get-ads-paged-with-geolocation
   [request]
   (let [ads-satisfying-geolocation (let [total-prefiltered-ads (int (:total_pages (dao/get-total-pages-number (:filters request) 1)))]
-                                     (let [prefiltered-ads (dao/get-paged-real-estates (:filters request) (- (:page request) 1) total-prefiltered-ads)]
+                                     (let [prefiltered-ads (dao/get-paged-real-estates (:filters request) 0 total-prefiltered-ads)]
                                        (for [real-estate prefiltered-ads
                                              :let [geolocation (:geolocation real-estate)]
                                              :when (is-geolocation-satisfied? (:coordinates (:filters request))
