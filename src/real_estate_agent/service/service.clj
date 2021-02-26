@@ -47,16 +47,15 @@
                                           :micro_locations       (:selectedMicroLocations (:filters request-body))
                                           :geolocation           (:coordinates (:filters request-body))
                                           :heating_types         (:heatingType (:filters request-body))
-                                          :max_price             (cast/string-to-double (:selectedMaxPrice (:filters request-body)))
-                                          :min_price             (cast/string-to-double (:selectedMinPrice (:filters request-body)))
-                                          :max_living_space_area (cast/string-to-double (:selectedMaxArea (:filters request-body)))
-                                          :min_living_space_area (cast/string-to-double (:selectedMinArea (:filters request-body)))
-                                          :max_rooms_number      (cast/string-to-double (:selectedMaxRooms (:filters request-body)))
-                                          :min_rooms_number      (cast/string-to-double (:selectedMinRooms (:filters request-body)))
+                                          :max_price             (:selectedMaxPrice (:filters request-body))
+                                          :min_price             (:selectedMinPrice (:filters request-body))
+                                          :max_living_space_area (:selectedMaxArea (:filters request-body))
+                                          :min_living_space_area (:selectedMinArea (:filters request-body))
+                                          :max_rooms_number      (:selectedMaxRooms (:filters request-body))
+                                          :min_rooms_number      (:selectedMinRooms (:filters request-body))
                                           :tittle                (:tittle (:filters request-body))
                                           :has_pictures          (:pictures (:filters request-body))
                                           :email_subscribed      (:subscribed (:filters request-body))
-
                                           } (cast/string-to-long (request-headers "user-id")))]
           (println f)
           (if (empty? f)
@@ -162,8 +161,8 @@
 (defn coordinates-str-to-vec
   [str-coordinates]
   (sort (into []
-        (map #(read-string %)
-             (clojure.string/split str-coordinates #",")))))
+              (map #(read-string %)
+                   (clojure.string/split str-coordinates #",")))))
 
 (defn is-geolocation-satisfied?
   [pol point]
