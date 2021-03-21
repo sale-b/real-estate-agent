@@ -805,3 +805,12 @@
             (is (= 0 (dao/count-users-saved-filters 1)))
             ))))))
 
+(deftest insert-and-get-last-filtering-job-execution-test
+  (testing "should return that table filtering-job-executions is empty and after insertion it should compare returned id with last inserted id  and validate that it is not empty anymore"
+    (is (dao/is-filtering-job-executions-empty?))
+    (let [fje (dao/insert-filtering-job-execution)]
+      (is (not (empty? fje)))
+      (is (not (nil? fje)))
+      (is (= (:id (dao/get-last-inserted-filtering-job-execution)) (:id fje)))
+      (is (not (dao/is-filtering-job-executions-empty?)))
+      )))

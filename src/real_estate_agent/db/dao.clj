@@ -312,6 +312,21 @@
   (:count (first (db/query db
                            ["select count(id) from saved_filters where user_id = ?" user-id]))))
 
+(defn insert-filtering-job-execution
+  []
+   (db/db-do-prepared-return-keys db
+                   ["insert into filtering_job_executions default values returning \"id\""]))
+
+(defn get-last-inserted-filtering-job-execution
+  []
+  (first (db/query db
+                   ["select * from filtering_job_executions order by id desc limit 1"])))
+
+
+(defn is-filtering-job-executions-empty?
+  []
+  (:case (first (db/query db
+                   ["select case when exists (select * from filtering_job_executions limit 1) then false else true end"]))))
 
 
 

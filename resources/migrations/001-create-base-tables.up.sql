@@ -40,7 +40,6 @@ create table users(
 
 );
 
-
 create table persistent_logins (
     id bigserial primary key,
 	user_id bigint not null,
@@ -78,4 +77,23 @@ CREATE TABLE saved_filters (
        foreign key(user_id)
     	references users(id)
     	on delete cascade
+);
+
+CREATE TABLE filtering_job_executions (
+  id bigserial primary key,
+  execution_time timestamp default current_timestamp not null
+);
+
+CREATE TABLE email_notifications (
+  id bigserial primary key,
+  saved_filter_id bigint,
+  user_email varchar(50),
+  ad_url varchar(255) not null,
+  email_sent boolean default false,
+  created_on timestamp default current_timestamp not null,
+  modified_on timestamp default current_timestamp not null,
+  constraint fk_saved_filter
+         foreign key(saved_filter_id)
+    	  references saved_filters(id)
+    	  on delete set null
 );
